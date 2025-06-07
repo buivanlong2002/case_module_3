@@ -3,16 +3,14 @@ package org.example.casemd3.dao;
 import org.example.casemd3.model.User;
 import org.example.casemd3.util.DBConnection;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 
 public class UserDAO {
     private Connection connection = DBConnection.getConnection();
 
     public UserDAO() throws SQLException {
     }
+
 
     public User findByEmail(String email) {
         String sql = "SELECT * FROM users WHERE email = ?";
@@ -27,6 +25,7 @@ public class UserDAO {
                         rs.getString("email"),
                         rs.getString("phone"),
                         rs.getString("address"),
+                        rs.getString("image"),
                         rs.getDate("birthday")
                 );
             }
@@ -52,6 +51,38 @@ public class UserDAO {
             throw e;
         }
         return null;
+    }
+
+    public boolean updatePasswordByUserId(int userId, String newPassword) throws SQLException {
+        String query = "UPDATE users SET password = ? WHERE user_id = ?";
+        try (
+                Connection conn = DBConnection.getConnection();
+                PreparedStatement stmt = conn.prepareStatement(query)
+        ) {
+            stmt.setString(1, newPassword);
+            stmt.setInt(2, userId);
+            int affectedRows = stmt.executeUpdate();
+            return affectedRows > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw e;
+        }
+    }
+
+    public boolean checkPassword(int userId, String password) throws SQLException {
+        String query = "SELECT password FROM users WHERE username = ?";
+        try (
+                Connection conn = DBConnection.getConnection();
+                PreparedStatement stmt = conn.prepareStatement(query)
+        ) {
+            stmt.setInt(1, userId);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                String storedPassword = rs.getString("password");
+                return storedPassword.equals(password);
+            }
+        }
+        return false;
     }
 }
 

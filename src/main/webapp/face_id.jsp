@@ -14,13 +14,8 @@
     <meta charset="UTF-8">
     <title>Thông tin cá nhân</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-
-    <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-
-    <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
     <style>
         body {
             background-color: #f4f7fa;
@@ -33,45 +28,13 @@
             border-right: 1px solid #dee2e6;
             box-shadow: 2px 0 10px rgba(0,0,0,0.05);
         }
-        /* Avatar wrapper với icon edit */
-        .profile-img-wrapper {
-            position: relative;
+        .profile-img {
             width: 120px;
             height: 120px;
-            margin: 0 auto;
-            cursor: pointer;
-        }
-        .profile-img {
-            width: 100%;
-            height: 100%;
             border-radius: 50%;
             object-fit: cover;
             border: 4px solid #ffffff;
             box-shadow: 0 0 10px rgba(0,0,0,0.1);
-            display: block;
-        }
-        .edit-icon {
-            position: absolute;
-            bottom: 5px;
-            right: 5px;
-            background-color: #007bff;
-            color: white;
-            border-radius: 50%;
-            padding: 6px;
-            font-size: 14px;
-            box-shadow: 0 0 5px rgba(0,0,0,0.2);
-            transition: background-color 0.3s ease;
-            text-decoration: none;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 28px;
-            height: 28px;
-        }
-        .edit-icon:hover {
-            background-color: #0056b3;
-            color: white;
-            text-decoration: none;
         }
         .nav-link {
             color: #495057;
@@ -144,20 +107,14 @@
         <div class="col-md-3">
             <div class="sidebar">
                 <div class="text-center mb-4">
-                    <div class="profile-img-wrapper" title="Thay đổi ảnh đại diện">
-                        <img src="<%= user.getImage() != null ? user.getImage() : "profile-image.jpg" %>"
-                             alt="Profile Image" class="profile-img">
-                        <a href="change-avatar.jsp" class="edit-icon" aria-label="Thay đổi ảnh đại diện">
-                            <i class="fas fa-pencil-alt"></i>
-                        </a>
-                    </div>
+                    <img src="profile-image.jpg" alt="Profile Image" class="profile-img mx-auto d-block">
                     <h5 class="mt-3"><%= user.getUsername() %></h5>
                 </div>
                 <ul class="nav flex-column">
-                    <li class="nav-item"><a class="nav-link active" href="profile"><i class="fas fa-user"></i> Thông tin cá nhân</a></li>
-                    <li class="nav-item"><a class="nav-link" href="change-password.jsp"><i class="fas fa-lock"></i> Đổi mật khẩu</a></li>
+                    <li class="nav-item"><a class="nav-link " href="profile"><i class="fas fa-user"></i> Thông tin cá nhân</a></li>
+                    <li class="nav-item"><a class="nav-link " href="change-password.jsp"><i class="fas fa-lock"></i> Đổi mật khẩu</a></li>
                     <li class="nav-item"><a class="nav-link" href="session-list"><i class="fas fa-desktop"></i> Kiểm tra các thiết bị đăng nhập</a></li>
-                    <li class="nav-item"><a class="nav-link" href="face_id.jsp"><i class="fas fa-user-circle"></i> Face ID</a></li>
+                    <li class="nav-item"><a class="nav-link active" href="face_id.jsp"><i class="fas fa-user-circle"></i> Face Id</a></li>
                     <li class="nav-item"><a class="nav-link" href="logout"><i class="fas fa-sign-out-alt"></i> Đăng xuất</a></li>
                 </ul>
             </div>
@@ -165,35 +122,54 @@
 
         <!-- Main Content -->
         <div class="col-md-9">
-            <div class="content" id="personal-info">
-                <h4>Thông tin cá nhân</h4>
+            <div class="content">
+                <h4>Danh sách Face ID đã đăng ký</h4>
                 <hr>
-                <div class="personal-info-card">
-                    <div class="info-item">
-                        <i class="fas fa-envelope"></i>
-                        <strong>Email:</strong>&nbsp;<%= user.getEmail() %>
-                    </div>
-                    <div class="info-item">
-                        <i class="fas fa-phone"></i>
-                        <strong>Số điện thoại:</strong>&nbsp;<%= user.getPhone() != null ? user.getPhone() : "Chưa cập nhật" %>
-                    </div>
-                    <div class="info-item">
-                        <i class="fas fa-calendar"></i>
-                        <strong>Ngày sinh:</strong>&nbsp;<%= user.getBirthday() != null ? user.getBirthday().toString() : "Chưa cập nhật" %>
-                    </div>
-                    <div class="info-item">
-                        <i class="fas fa-map-marker-alt"></i>
-                        <strong>Địa chỉ:</strong>&nbsp;<%= user.getAddress() != null ? user.getAddress() : "Chưa cập nhật" %>
-                    </div>
-                    <a href="editProfile.jsp" class="btn btn-primary mt-3">Chỉnh sửa thông tin</a>
+
+                <c:choose>
+                    <c:when test="${not empty faceTokens}">
+                        <table class="table table-bordered align-middle mt-3">
+                            <thead class="table-light">
+                            <tr>
+                                <th style="width: 5%;">#</th>
+                                <th>Face Token</th>
+                                <th style="width: 15%;">Hành động</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <c:forEach var="token" items="${faceTokens}" varStatus="loop">
+                                <tr>
+                                    <td>${loop.index + 1}</td>
+                                    <td>${token}</td>
+                                    <td>
+                                        <form action="deleteFaceId" method="post" onsubmit="return confirm('Bạn có chắc chắn muốn xóa Face ID này?');">
+                                            <input type="hidden" name="token" value="${token}">
+                                            <button type="submit" class="btn btn-danger btn-sm">
+                                                <i class="fas fa-trash-alt"></i> Xóa
+                                            </button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            </c:forEach>
+                            </tbody>
+                        </table>
+                    </c:when>
+                    <c:otherwise>
+                        <div class="alert alert-info">Bạn chưa có Face ID nào được lưu.</div>
+                    </c:otherwise>
+                </c:choose>
+
+                <div class="mt-4">
+                    <a href="register-face.jsp" class="btn btn-primary">
+                        <i class="fas fa-plus-circle"></i> Thêm Face ID mới
+                    </a>
                 </div>
             </div>
         </div>
     </div>
 </div>
 
-<!-- Bootstrap JS Bundle -->
+<!-- JS -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-
 </body>
 </html>

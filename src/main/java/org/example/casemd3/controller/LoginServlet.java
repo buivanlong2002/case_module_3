@@ -28,14 +28,14 @@ public class LoginServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String method = req.getParameter("method");
-        Part filePart = req.getPart("photo");
 
         if ("account".equals(method)) {
             handleAccountLogin(req, resp);
         } else if ("face".equals(method)) {
             handleFaceLogin(req, resp);
         } else {
-            resp.getWriter().println("Phương thức đăng nhập không hợp lệ");
+            req.setAttribute("error", "Phương thức đăng nhập không hợp lệ");
+            req.getRequestDispatcher("login.jsp").forward(req, resp);
         }
     }
 
@@ -53,16 +53,22 @@ public class LoginServlet extends HttpServlet {
                 req.getRequestDispatcher("login.jsp").forward(req, resp);
             }
         } catch (Exception e) {
-            throw new ServletException(e);
+            throw new ServletException("Lỗi đăng nhập tài khoản", e);
         }
     }
 
     private void handleFaceLogin(HttpServletRequest req, HttpServletResponse resp) throws IOException, ServletException {
-        Part filePart = req.getPart("photo");
-        FaceIdService faceIdService = new FaceIdService();
-
         try {
+            Part filePart = req.getPart("photo");
+            if (filePart == null || filePart.getSize() == 0) {
+                req.setAttribute("error", "Vui lòng chọn ảnh khuôn mặt");
+                req.getRequestDispatcher("login.jsp").forward(req, resp);
+                return;
+            }
+
+            FaceIdService faceIdService = new FaceIdService();
             List<FaceId> faceIds = faceIdDao.findAllFaceIds();
+
             if (faceIds == null || faceIds.isEmpty()) {
                 req.setAttribute("error", "Không có dữ liệu khuôn mặt trong hệ thống");
                 req.getRequestDispatcher("login.jsp").forward(req, resp);
@@ -88,15 +94,18 @@ public class LoginServlet extends HttpServlet {
 
         } catch (Exception e) {
             e.printStackTrace();
-            req.setAttribute("error", "Đăng nhập bằng khuôn mặt thất bại");
+            req.setAttribute("error", "Đăng nhập bằng khuôn mặt thất bại: " + e.getMessage());
             req.getRequestDispatcher("login.jsp").forward(req, resp);
         }
     }
 
-    private void createSessionAndRedirect(HttpServletRequest req, HttpServletResponse resp, int userId, String email, String remember) throws IOException, SQLException {
-        String userAgentRaw = req.getHeader("User-Agent");
-        String browserName = UserAgentUtil.getBrowserName(userAgentRaw);
+    private void createSessionAndRedirect(HttpServletRequest req, HttpServletResponse resp,
+                                          int userId, String email, String remember)
+            throws IOException, SQLException {
+        String userAgent = req.getHeader("User-Agent");
+        String browserName = UserAgentUtil.getBrowserName(userAgent);
         String ip = req.getRemoteAddr();
+
         if ("0:0:0:0:0:0:0:1".equals(ip) || "::1".equals(ip)) {
             ip = "127.0.0.1";
         }
@@ -119,7 +128,7 @@ public class LoginServlet extends HttpServlet {
         if ("on".equals(remember)) {
             Cookie userCookie = new Cookie("remember_user", String.valueOf(userId));
             Cookie sessionCookie = new Cookie("remember_session", sessionId);
-            userCookie.setMaxAge(60 * 60 * 24 * 7);
+            userCookie.setMaxAge(60 * 60 * 24 * 7); // 7 ngày
             sessionCookie.setMaxAge(60 * 60 * 24 * 7);
             resp.addCookie(userCookie);
             resp.addCookie(sessionCookie);

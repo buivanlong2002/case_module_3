@@ -92,26 +92,11 @@
                     <h5 class="mt-3"><%= user.getUsername() %></h5>
                 </div>
                 <ul class="nav flex-column">
-                    <li class="nav-item">
-                        <a class="nav-link" href="profile">
-                            <i class="fas fa-user"></i> Thông tin cá nhân
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="change-password.jsp">
-                            <i class="fas fa-lock"></i> Đổi mật khẩu
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="session-list">
-                            <i class="fas fa-desktop"></i> Thiết bị đăng nhập
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="logout">
-                            <i class="fas fa-sign-out-alt"></i> Đăng xuất
-                        </a>
-                    </li>
+                    <li class="nav-item"><a class="nav-link active" href="profile"><i class="fas fa-user"></i> Thông tin cá nhân</a></li>
+                    <li class="nav-item"><a class="nav-link " href="change-password.jsp"><i class="fas fa-lock"></i> Đổi mật khẩu</a></li>
+                    <li class="nav-item"><a class="nav-link" href="session-list"><i class="fas fa-desktop"></i> Kiểm tra các thiết bị đăng nhập</a></li>
+                    <li class="nav-item"><a class="nav-link" href="face_id.jsp"><i class="fas fa-user-circle"></i> Face Id</a></li>
+                    <li class="nav-item"><a class="nav-link" href="logout"><i class="fas fa-sign-out-alt"></i> Đăng xuất</a></li>
                 </ul>
             </div>
         </div>

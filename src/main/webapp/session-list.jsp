@@ -36,9 +36,10 @@
           <h5 class="mt-3"><%= username %></h5>
         </div>
         <ul class="nav flex-column">
-          <li class="nav-item"><a class="nav-link" href="profile"><i class="fas fa-user"></i> Thông tin cá nhân</a></li>
-          <li class="nav-item"><a class="nav-link" href="change-password.jsp"><i class="fas fa-lock"></i> Đổi mật khẩu</a></li>
+          <li class="nav-item"><a class="nav-link " href="profile"><i class="fas fa-user"></i> Thông tin cá nhân</a></li>
+          <li class="nav-item"><a class="nav-link " href="change-password.jsp"><i class="fas fa-lock"></i> Đổi mật khẩu</a></li>
           <li class="nav-item"><a class="nav-link active" href="session-list"><i class="fas fa-desktop"></i> Kiểm tra các thiết bị đăng nhập</a></li>
+          <li class="nav-item"><a class="nav-link " href="face_id.jsp"><i class="fas fa-user-circle"></i> Face Id</a></li>
           <li class="nav-item"><a class="nav-link" href="logout"><i class="fas fa-sign-out-alt"></i> Đăng xuất</a></li>
         </ul>
       </div>
@@ -58,11 +59,12 @@
                   <small class="text-muted">IP: ${s.ipAddress} | Đăng nhập lúc: ${s.loginTime}</small>
                 </div>
                 <form action="remote-logout" method="post" style="margin:0;">
-                  <input type="hidden" name="ipAddress" value="${s.ipAddress}" />
+                  <input type="hidden" name="sessionId" value="${s.sessionId}" />
                   <button type="submit" class="btn btn-outline-danger btn-sm" title="Đăng xuất thiết bị này">
                     <i class="fas fa-sign-out-alt"></i> Đăng xuất
                   </button>
                 </form>
+
               </li>
             </c:forEach>
           </c:if>

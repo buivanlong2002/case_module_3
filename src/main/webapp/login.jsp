@@ -18,11 +18,8 @@
             border-radius: 12px;
             box-shadow: 0 0 15px rgba(0,0,0,0.1);
         }
-        #video, #canvas {
+        #faceLoginForm {
             display: none;
-            width: 100%;
-            max-width: 320px;
-            margin: 10px auto;
         }
     </style>
 </head>
@@ -38,6 +35,7 @@
             </div>
         </c:if>
 
+        <!-- Form đăng nhập bằng tài khoản -->
         <form action="login" method="post">
             <input type="hidden" name="method" value="account" />
             <div class="mb-3">
@@ -55,12 +53,14 @@
 
         <hr>
 
+        <!-- Nút kích hoạt đăng nhập bằng khuôn mặt -->
         <button type="button" class="btn btn-success w-100" onclick="startFaceLogin()">Đăng nhập bằng Face ID</button>
 
+        <!-- Form đăng nhập bằng khuôn mặt -->
         <form id="faceLoginForm" action="login" method="post" enctype="multipart/form-data">
             <input type="hidden" name="method" value="face">
-            <input type="file" name="photo" accept="image/*" required>
-            <button type="submit" class="btn btn-secondary mt-2">Xác thực</button>
+            <input type="file" name="photo" accept="image/*" class="form-control mt-3" required>
+            <button type="submit" class="btn btn-secondary mt-2 w-100">Xác thực khuôn mặt</button>
         </form>
 
         <p class="text-center mt-3">
@@ -70,11 +70,11 @@
     </div>
 </div>
 
-
-</body>
 <script>
     function startFaceLogin() {
         document.getElementById('faceLoginForm').style.display = 'block';
     }
 </script>
+
+</body>
 </html>
