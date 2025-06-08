@@ -85,7 +85,13 @@
         <div class="col-md-3">
             <div class="sidebar">
                 <div class="text-center mb-4">
-                    <img src="profile-image.jpg" alt="Profile Image" class="profile-img mx-auto d-block" />
+                    <div class="profile-img-wrapper" title="Thay đổi ảnh đại diện">
+                        <img src="<%= user.getImage() != null ? user.getImage() : "default.png" %>"
+                             alt="Avatar mặc định" class="profile-img"/>
+                        <a href="change-avatar.jsp" class="edit-icon" aria-label="Thay đổi ảnh đại diện">
+                            <i class="fas fa-pencil-alt"></i>
+                        </a>
+                    </div>
                     <h5 class="mt-3"><%= user.getUsername() %></h5>
                 </div>
                 <ul class="nav flex-column">

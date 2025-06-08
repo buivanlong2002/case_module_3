@@ -24,8 +24,8 @@ public class UserDAO {
                         rs.getString("password"),
                         rs.getString("email"),
                         rs.getString("phone"),
-                        rs.getString("address"),
                         rs.getString("image"),
+                        rs.getString("address"),
                         rs.getDate("birthday")
                 );
             }
@@ -83,6 +83,43 @@ public class UserDAO {
             }
         }
         return false;
+    }
+    public static void updateAvatar(int userId, String avatarUrl) {
+        String sql = "UPDATE users SET image = ? WHERE user_id = ?";
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, avatarUrl);
+            stmt.setInt(2, userId);
+            stmt.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static boolean updateProfile(User user) {
+        String sql = "UPDATE users SET phone = ?, birthday = ?, address = ? WHERE user_id = ?";
+
+        try (Connection conn = DBConnection.getConnection(); // bạn dùng cách nào để lấy Connection thì thay thế
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setString(1, user.getPhone());
+
+            if (user.getBirthday() != null) {
+                ps.setDate(2, new Date(user.getBirthday().getTime())); // chuyển java.util.Date hoặc java.sql.Date đều được
+            } else {
+                ps.setNull(2, java.sql.Types.DATE);
+            }
+
+            ps.setString(3, user.getAddress());
+            ps.setInt(4, user.getUser_id());
+
+            int rows = ps.executeUpdate();
+            return rows > 0;
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 }
 

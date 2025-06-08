@@ -103,6 +103,7 @@ public class LoginServlet extends HttpServlet {
                                           int userId, String email, String remember)
             throws IOException, SQLException {
         String userAgent = req.getHeader("User-Agent");
+        System.out.println(userAgent);
         String browserName = UserAgentUtil.getBrowserName(userAgent);
         String ip = req.getRemoteAddr();
 

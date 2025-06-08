@@ -1,3 +1,4 @@
+<%@ page import="org.example.casemd3.model.User" %>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <!DOCTYPE html>
@@ -23,8 +24,11 @@
 </head>
 <body>
 <%
-  String username = (String) session.getAttribute("username");
-  if (username == null) username = "Văn Long Bùi";
+  User user = (User) session.getAttribute("currentUser");
+  if (user == null) {
+    response.sendRedirect("login.jsp");
+    return;
+  }
 %>
 
 <div class="container-fluid mt-4">
@@ -32,8 +36,14 @@
     <div class="col-md-3">
       <div class="sidebar">
         <div class="text-center mb-4">
-          <img src="profile-image.jpg" alt="Profile Image" class="profile-img mx-auto d-block" />
-          <h5 class="mt-3"><%= username %></h5>
+          <div class="profile-img-wrapper" title="Thay đổi ảnh đại diện">
+            <img src="<%= user.getImage() != null ? user.getImage() : "default.png" %>"
+                 alt="Avatar mặc định" class="profile-img"/>
+            <a href="change-avatar.jsp" class="edit-icon" aria-label="Thay đổi ảnh đại diện">
+              <i class="fas fa-pencil-alt"></i>
+            </a>
+          </div>
+          <h5 class="mt-3"><%= user.getUsername() %></h5>
         </div>
         <ul class="nav flex-column">
           <li class="nav-item"><a class="nav-link " href="profile"><i class="fas fa-user"></i> Thông tin cá nhân</a></li>
