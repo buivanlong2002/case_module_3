@@ -12,8 +12,8 @@
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
-    <title>Thông tin cá nhân</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Kiểm tra Face ID</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
@@ -30,13 +30,42 @@
             box-shadow: 2px 0 10px rgba(0, 0, 0, 0.05);
         }
 
-        .profile-img {
+        .profile-img-wrapper {
+            position: relative;
             width: 120px;
             height: 120px;
+            margin: 0 auto;
+        }
+
+        .profile-img {
+            width: 100%;
+            height: 100%;
             border-radius: 50%;
             object-fit: cover;
             border: 4px solid #ffffff;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .edit-icon {
+            position: absolute;
+            bottom: 5px;
+            right: 5px;
+            background-color: #007bff;
+            color: white;
+            border-radius: 50%;
+            padding: 6px;
+            font-size: 14px;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 28px;
+            height: 28px;
+            transition: background-color 0.3s ease;
+        }
+
+        .edit-icon:hover {
+            background-color: #0056b3;
         }
 
         .nav-link {
@@ -46,6 +75,9 @@
             transition: all 0.3s ease;
             margin: 5px 0;
             font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
 
         .nav-link:hover {
@@ -66,65 +98,63 @@
             border-radius: 12px;
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
             margin: 20px 0;
+            max-width: 900px;
         }
 
-        .content h4 {
+        h4 {
             color: #343a40;
             font-weight: 600;
         }
 
-        .personal-info-card {
-            background: linear-gradient(135deg, #f8f9fa, #ffffff);
-            padding: 20px;
-            border-radius: 10px;
-            border: 1px solid #e9ecef;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        .table {
+            border-radius: 8px;
+            overflow: hidden;
+            border: 1px solid #dee2e6;
         }
 
-        .personal-info-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
-        }
-
-        .info-item {
-            margin-bottom: 15px;
-            display: flex;
-            align-items: center;
-            color: #495057;
-        }
-
-        .info-item i {
-            margin-right: 10px;
-            color: #007bff;
-            font-size: 18px;
+        .table th, .table td {
+            vertical-align: middle;
         }
 
         .btn-primary {
-            background: linear-gradient(90deg, #007bff, #00c4cc);
+            background-color: #007bff;
             border: none;
-            padding: 12px 25px;
-            border-radius: 10px;
-            transition: transform 0.2s ease, box-shadow 0.3s ease;
-            color: white;
+            padding: 8px 16px;
+            border-radius: 6px;
             font-weight: 500;
+            transition: all 0.3s ease;
         }
 
         .btn-primary:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 5px 15px rgba(0, 123, 255, 0.4);
+            background-color: #0056b3;
+            box-shadow: 0 2px 5px rgba(0, 123, 255, 0.2);
+        }
+
+        .btn-danger {
+            background-color: #dc3545;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+        }
+
+        .btn-danger:hover {
+            background-color: #a71d2a;
+            box-shadow: 0 2px 5px rgba(220, 53, 69, 0.2);
         }
 
         .btn-secondary {
-            padding: 12px 25px;
-            border-radius: 10px;
-            transition: transform 0.2s ease;
+            padding: 8px 16px;
+            border-radius: 6px;
+            transition: all 0.3s ease;
             background-color: #6c757d;
             color: white;
         }
 
         .btn-secondary:hover {
-            transform: translateY(-3px);
             background-color: #5a6268;
+            box-shadow: 0 2px 5px rgba(108, 117, 125, 0.2);
         }
 
         .camera-container {
@@ -152,7 +182,7 @@
             width: 100%;
             height: 100%;
             border: 3px solid transparent;
-            border-image: linear-gradient(45deg, #00c4cc, #007bff) 1;
+            border-image: linear-gradient(45deg, #007bff, #00c4cc) 1;
             border-radius: 50%;
             clip-path: ellipse(45% 55% at 50% 50%);
             pointer-events: none;
@@ -161,8 +191,8 @@
         }
 
         @keyframes glow {
-            from { border-image: linear-gradient(45deg, #00c4cc, #007bff) 1; }
-            to { border-image: linear-gradient(45deg, #007bff, #00c4cc) 1; }
+            from { border-image: linear-gradient(45deg, #007bff, #00c4cc) 1; }
+            to { border-image: linear-gradient(45deg, #00c4cc, #007bff) 1; }
         }
 
         .guidance-text {
@@ -239,10 +269,41 @@
             from { opacity: 0; transform: translateY(10px); }
             to { opacity: 1; transform: translateY(0); }
         }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .sidebar {
+                min-height: auto;
+                padding: 15px;
+            }
+
+            .profile-img-wrapper {
+                width: 100px;
+                height: 100px;
+            }
+
+            .content {
+                padding: 20px;
+            }
+
+            .nav-link {
+                font-size: 0.9rem;
+                padding: 8px 12px;
+            }
+
+            .camera-container {
+                width: 300px;
+                height: 225px;
+            }
+
+            .camera-video, .preview-image, #canvas {
+                width: 300px;
+                height: 225px;
+            }
+        }
     </style>
 </head>
 <body>
-
 <div class="container-fluid mt-4">
     <div class="row">
         <!-- Sidebar -->
@@ -261,8 +322,8 @@
                 <ul class="nav flex-column">
                     <li class="nav-item"><a class="nav-link" href="profile"><i class="fas fa-user"></i> Thông tin cá nhân</a></li>
                     <li class="nav-item"><a class="nav-link" href="change-password.jsp"><i class="fas fa-lock"></i> Đổi mật khẩu</a></li>
-                    <li class="nav-item"><a class="nav-link" href="session-list"><i class="fas fa-desktop"></i> Kiểm tra các thiết bị đăng nhập</a></li>
-                    <li class="nav-item"><a class="nav-link active" href="face_id"><i class="fas fa-user-circle"></i> Face Id</a></li>
+                    <li class="nav-item"><a class="nav-link" href="session-list"><i class="fas fa-desktop"></i> Kiểm tra thiết bị đăng nhập</a></li>
+                    <li class="nav-item"><a class="nav-link active" href="face_id"><i class="fas fa-user-circle"></i> Face ID</a></li>
                     <li class="nav-item"><a class="nav-link" href="logout"><i class="fas fa-sign-out-alt"></i> Đăng xuất</a></li>
                 </ul>
             </div>
@@ -271,9 +332,8 @@
         <!-- Main Content -->
         <div class="col-md-9">
             <div class="content">
-                <h4>Danh sách Face ID đã đăng ký</h4>
+                <h4 class="mb-3"><i class="fas fa-user-circle"></i> Kiểm tra Face ID</h4>
                 <hr>
-
                 <c:choose>
                     <c:when test="${not empty faceTokens}">
                         <table class="table table-bordered align-middle mt-3">
@@ -291,7 +351,7 @@
                                     <td>${token}</td>
                                     <td>
                                         <form action="deleteFaceId" method="post"
-                                              onsubmit="return confirm('Bạn có chắc chắn muốn xóa Face ID này?');">
+                                              on-submit="return confirm('Bạn có chắc chắn muốn xóa Face ID này?');">
                                             <input type="hidden" name="token" value="${token}">
                                             <button type="submit" class="btn btn-danger btn-sm">
                                                 <i class="fas fa-trash-alt"></i> Xóa
@@ -307,7 +367,6 @@
                         <div class="alert alert-info">Bạn chưa có Face ID nào được lưu.</div>
                     </c:otherwise>
                 </c:choose>
-
                 <div class="mt-4">
                     <button type="button" class="btn btn-primary" data-bs-toggle="modal"
                             data-bs-target="#registerFaceModal">
@@ -356,6 +415,15 @@
 <!-- JS -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script>
+    // Smooth scrolling for sidebar links
+    document.querySelectorAll('.nav-link').forEach(link => {
+        link.addEventListener('click', function (e) {
+            e.preventDefault();
+            const href = this.getAttribute('href');
+            window.location.href = href;
+        });
+    });
+
     const video = document.getElementById('video');
     const canvas = document.getElementById('canvas');
     const faceImageInput = document.getElementById('faceImage');
@@ -523,4 +591,5 @@
         successMessage.textContent = '';
     });
 </script>
+</body>
 </html>

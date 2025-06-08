@@ -77,14 +77,14 @@ public class LoginServlet extends HttpServlet {
 
             String uploadedFaceToken = faceIdService.detectFaceToken(filePart.getInputStream());
             if (uploadedFaceToken == null) {
-                req.setAttribute("error", "Không nhận diện được khuôn mặt trong ảnh");
+                req.setAttribute("error", "Không nhận diện được khuôn mặt");
                 req.getRequestDispatcher("login.jsp").forward(req, resp);
                 return;
             }
 
             FaceId matchedFace = faceIdService.recognizeUser(uploadedFaceToken, faceIds);
             if (matchedFace != null) {
-                int userId = matchedFace.getId();
+                int userId = matchedFace.getUser_id();
                 String email = userDAO.getEmailByUserId(userId);
                 createSessionAndRedirect(req, resp, userId, email, null);
             } else {
