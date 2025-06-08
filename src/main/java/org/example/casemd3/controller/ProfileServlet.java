@@ -2,6 +2,7 @@ package org.example.casemd3.controller;
 
 import org.example.casemd3.model.User;
 import org.example.casemd3.dao.UserDAO;
+import org.example.casemd3.service.UserService;
 
 import javax.servlet.*;
 import javax.servlet.http.*;
@@ -11,16 +12,11 @@ import java.sql.SQLException;
 
 @WebServlet(name = "ProfileServlet", value = "/profile")
 public class ProfileServlet extends HttpServlet {
-    private UserDAO userDAO;
+    private final UserService userService = new UserService();
 
-    @Override
-    public void init() throws ServletException {
-        try {
-            userDAO = new UserDAO();
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
+    public ProfileServlet() throws SQLException {
     }
+
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -30,7 +26,7 @@ public class ProfileServlet extends HttpServlet {
             response.sendRedirect("login.jsp");
             return;
         }
-        User user = userDAO.findByEmail(email);
+        User user = userService.findUserByEmail(email);
         if (user == null) {
             response.sendRedirect("login.jsp");
             return;

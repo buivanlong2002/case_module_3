@@ -2,6 +2,7 @@ package org.example.casemd3.controller;
 
 import org.example.casemd3.dao.UserSessionDAO;
 import org.example.casemd3.model.UserSession;
+import org.example.casemd3.service.UserSessionService;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -14,7 +15,7 @@ import java.sql.SQLException;
 import java.util.List;
 @WebServlet("/session-list")
 public class SessionListServlet extends HttpServlet {
-    private final UserSessionDAO sessionDAO = new UserSessionDAO();
+    private final UserSessionService sessionService = new UserSessionService();
 
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         HttpSession httpSession = req.getSession(false);
@@ -24,12 +25,8 @@ public class SessionListServlet extends HttpServlet {
         }
 
         int userId = (Integer) httpSession.getAttribute("userId");
-        try {
-            List<UserSession> sessions = sessionDAO.getSessionsByUser(userId);
-            req.setAttribute("sessions", sessions);
-            req.getRequestDispatcher("session-list.jsp").forward(req, resp);
-        } catch (SQLException e) {
-            throw new ServletException(e);
-        }
+        List<UserSession> sessions = sessionService.getSessionsByUser(userId);
+        req.setAttribute("sessions", sessions);
+        req.getRequestDispatcher("session-list.jsp").forward(req, resp);
     }
 }

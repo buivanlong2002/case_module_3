@@ -19,14 +19,8 @@ import java.io.InputStream;
 @MultipartConfig(maxFileSize = 10 * 1024 * 1024) // Giới hạn 10MB
 public class RegisterFaceServlet extends HttpServlet {
 
-    private FaceIdService faceService;
-    private FaceIdDao faceIdDAO;
+    private final FaceIdService faceService = new FaceIdService();
 
-    @Override
-    public void init() {
-        faceService = new FaceIdService();
-        faceIdDAO = new FaceIdDao();
-    }
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -58,7 +52,7 @@ public class RegisterFaceServlet extends HttpServlet {
             faceId.setUser_id(user.getUser_id());
             faceId.setFaceIdToken(faceToken);
 
-            if (!faceIdDAO.save(faceId)) {
+            if (!faceService.saveFaceId(faceId)) {
                 sendJsonResponse(resp, false, "Lưu Face ID thất bại.", HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
                 return;
             }

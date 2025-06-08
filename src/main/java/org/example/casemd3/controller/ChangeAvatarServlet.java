@@ -2,6 +2,8 @@ package org.example.casemd3.controller;
 
 import org.example.casemd3.dao.UserDAO;
 import org.example.casemd3.model.User;
+import org.example.casemd3.service.UserService;
+
 import javax.servlet.ServletException;
 import javax.servlet.annotation.MultipartConfig;
 import javax.servlet.annotation.WebServlet;
@@ -22,7 +24,7 @@ import java.sql.SQLException;
 public class ChangeAvatarServlet extends HttpServlet {
 
     private static final String UPLOAD_DIR = "uploads/avatars";
-    private UserDAO userDAO = new UserDAO();
+    private final UserService userService = new UserService();
 
     public ChangeAvatarServlet() throws SQLException {
     }

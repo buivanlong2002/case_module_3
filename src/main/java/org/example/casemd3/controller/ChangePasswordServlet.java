@@ -2,6 +2,7 @@ package org.example.casemd3.controller;
 
 import org.example.casemd3.dao.UserDAO;
 import org.example.casemd3.model.User;
+import org.example.casemd3.service.UserService;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -11,7 +12,7 @@ import java.sql.SQLException;
 
 @WebServlet("/changePasswordServlet")
 public class ChangePasswordServlet extends HttpServlet {
-    private final UserDAO userDao = new UserDAO();
+    private final UserService userService = new UserService();
 
     public ChangePasswordServlet() throws SQLException {}
 
@@ -60,14 +61,14 @@ public class ChangePasswordServlet extends HttpServlet {
         }
 
         try {
-            boolean isCurrentPasswordCorrect = userDao.checkPassword(user.getUser_id(), currentPassword);
+            boolean isCurrentPasswordCorrect = userService.checkPassword(user.getUser_id(), currentPassword);
             if (isCurrentPasswordCorrect) {
                 req.setAttribute("errorCurrentPassword", "Mật khẩu hiện tại không đúng.");
                 req.getRequestDispatcher("change-password.jsp").forward(req, resp);
                 return;
             }
 
-            boolean updated = userDao.updatePasswordByUserId(user.getUser_id(), newPassword);
+            boolean updated = userService.updatePassword(user.getUser_id(), newPassword);
             if (updated) {
                 req.setAttribute("message", "Đổi mật khẩu thành công.");
                 req.setAttribute("askLogoutOtherDevices", true);

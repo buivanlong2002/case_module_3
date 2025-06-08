@@ -58,54 +58,6 @@ public class AuthDao {
         }
     }
 
-    public String sendFaceImageAndGetBase64(String base64Image) throws IOException {
-        String apiUrl = "http://127.0.0.1:5000/analyze-image/";
-        URL url = new URL(apiUrl);
-        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-
-        conn.setRequestMethod("POST");
-        conn.setRequestProperty("Content-Type", "application/json; utf-8");
-        conn.setRequestProperty("Accept", "application/json");
-        conn.setDoOutput(true);
-
-        String jsonInputString = "{\"imageBase64\":\"" + base64Image + "\"}";
-
-        try (OutputStream os = conn.getOutputStream()) {
-            byte[] input = jsonInputString.getBytes(StandardCharsets.UTF_8);
-            os.write(input, 0, input.length);
-        }
-
-        int code = conn.getResponseCode();
-        if (code == 200) {
-            try (BufferedReader br = new BufferedReader(
-                    new InputStreamReader(conn.getInputStream(), StandardCharsets.UTF_8))) {
-
-                StringBuilder response = new StringBuilder();
-                String responseLine;
-                while ((responseLine = br.readLine()) != null) {
-                    response.append(responseLine.trim());
-                }
-
-                com.google.gson.JsonObject jsonObject = JsonParser.parseString(response.toString()).getAsJsonObject();
-                String status = jsonObject.get("status").getAsString();
-                if ("success".equals(status)) {
-                    JsonObject dataObj = jsonObject.get("data").getAsJsonObject();
-
-                    // Lấy chuỗi base64 ảnh từ API trả về
-                    if (dataObj.has("base64")) {
-                        return dataObj.get("base64").getAsString();
-                    } else {
-                        return null; // Không có base64 trong response
-                    }
-                } else {
-                    return null; // API trả lỗi
-                }
-            }
-        } else {
-            return null; // HTTP lỗi
-        }
-    }
-
 }
 
 

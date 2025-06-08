@@ -16,7 +16,7 @@ import java.util.List;
 
 @WebServlet(name = "FaceIdServlet", urlPatterns = {"/face_id"})
 public class FaceIdServlet extends HttpServlet {
-    private final FaceIdDao faceIdDao = new FaceIdDao();
+    private final FaceIdService faceIdService = new FaceIdService();
 
 
     @Override
@@ -27,7 +27,7 @@ public class FaceIdServlet extends HttpServlet {
             resp.sendRedirect("login.jsp");
             return;
         }
-        List<String> faceTokens = faceIdDao.getFaceTokensByUserId(user.getUser_id());
+        List<String> faceTokens = faceIdService.getFaceTokensByUserId(user.getUser_id());
         req.setAttribute("faceTokens", faceTokens);
 
         req.getRequestDispatcher("/face_id.jsp").forward(req, resp);

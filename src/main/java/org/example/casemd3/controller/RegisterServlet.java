@@ -1,6 +1,8 @@
 package org.example.casemd3.controller;
 
 import org.example.casemd3.dao.AuthDao;
+import org.example.casemd3.service.AuthService;
+
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -12,7 +14,7 @@ import java.util.regex.Pattern;
 
 @WebServlet("/register")
 public class RegisterServlet extends HttpServlet {
-    private final AuthDao authDao = new AuthDao();
+    private final AuthService authService = new AuthService();
     private static final Pattern EMAIL_PATTERN = Pattern.compile("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$");
 
     @Override
@@ -50,22 +52,17 @@ public class RegisterServlet extends HttpServlet {
             return;
         }
 
-        try {
-            if (authDao.isUserOrEmailExist(username, email)) {
-                req.setAttribute("error", "Tên đăng nhập hoặc email đã tồn tại.");
-                req.getRequestDispatcher("register.jsp").forward(req, resp);
-                return;
-            }
+        if (authService.isUserOrEmailExist(username, email)) {
+            req.setAttribute("error", "Tên đăng nhập hoặc email đã tồn tại.");
+            req.getRequestDispatcher("register.jsp").forward(req, resp);
+            return;
+        }
 
-            boolean inserted = authDao.insertUser(username, email, password);
-            if (inserted) {
-                resp.sendRedirect("login.jsp");
-            } else {
-                req.setAttribute("error", "Đăng ký thất bại, vui lòng thử lại.");
-                req.getRequestDispatcher("register.jsp").forward(req, resp);
-            }
-        } catch (SQLException e) {
-            req.setAttribute("error", "Lỗi hệ thống: " + e.getMessage());
+        boolean inserted = authService.registerUser(username, email, password);
+        if (inserted) {
+            resp.sendRedirect("login.jsp");
+        } else {
+            req.setAttribute("error", "Đăng ký thất bại, vui lòng thử lại.");
             req.getRequestDispatcher("register.jsp").forward(req, resp);
         }
     }

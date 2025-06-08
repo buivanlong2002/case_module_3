@@ -1,6 +1,7 @@
 package org.example.casemd3.controller;
 
 import org.example.casemd3.dao.UserSessionDAO;
+import org.example.casemd3.service.UserSessionService;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -13,18 +14,14 @@ import java.sql.SQLException;
 
 @WebServlet("/logout")
 public class LogoutServlet extends HttpServlet {
-    private UserSessionDAO sessionDAO = new UserSessionDAO();
+    private final UserSessionService sessionService = new UserSessionService();
 
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         HttpSession httpSession = req.getSession(false);
         if (httpSession != null) {
             String sessionId = (String) httpSession.getAttribute("sessionId");
             if (sessionId != null) {
-                try {
-                    sessionDAO.deleteSession(sessionId);
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
+                sessionService.deleteSessionByUserAgent(sessionId);
             }
             httpSession.invalidate();
         }

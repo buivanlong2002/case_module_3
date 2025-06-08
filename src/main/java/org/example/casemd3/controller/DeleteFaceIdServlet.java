@@ -16,7 +16,7 @@ import java.io.IOException;
 @WebServlet(name = "DeleteFaceIdServlet", urlPatterns = {"/deleteFaceId"})
 public class DeleteFaceIdServlet extends HttpServlet {
 
-    private final FaceIdDao faceIdDao = new FaceIdDao();
+    private final FaceIdService faceIdService = new FaceIdService();
 
 
 
@@ -32,7 +32,7 @@ public class DeleteFaceIdServlet extends HttpServlet {
 
         String tokenToDelete = req.getParameter("token");
         if (tokenToDelete != null && !tokenToDelete.isEmpty()) {
-            faceIdDao.deleteFaceToken( tokenToDelete);
+            faceIdService.deleteFaceToken( tokenToDelete);
         }
 
         resp.sendRedirect("face_id");

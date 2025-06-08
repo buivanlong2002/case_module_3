@@ -2,7 +2,10 @@ package org.example.casemd3.controller;
 
 import org.example.casemd3.dao.*;
 import org.example.casemd3.model.FaceId;
+import org.example.casemd3.service.AuthService;
 import org.example.casemd3.service.FaceIdService;
+import org.example.casemd3.service.UserService;
+import org.example.casemd3.service.UserSessionService;
 import org.example.casemd3.util.UserAgentUtil;
 
 import javax.servlet.ServletException;
@@ -17,10 +20,10 @@ import java.util.UUID;
 @WebServlet("/login")
 @MultipartConfig
 public class LoginServlet extends HttpServlet {
-    private final AuthDao authDao = new AuthDao();
-    private final UserSessionDAO sessionDAO = new UserSessionDAO();
-    private final FaceIdDao faceIdDao = new FaceIdDao();
-    private final UserDAO userDAO = new UserDAO();
+    private final AuthService authService = new AuthService();
+    private final UserSessionService userSessionService = new UserSessionService();
+    private final FaceIdService faceIdService = new FaceIdService();
+    private final UserService userService = new UserService();
 
     public LoginServlet() throws SQLException {
     }
@@ -45,7 +48,7 @@ public class LoginServlet extends HttpServlet {
         String remember = req.getParameter("remember");
 
         try {
-            int userId = authDao.validateUser(email, password);
+            int userId = authService.loginUser(email, password);
             if (userId != -1) {
                 createSessionAndRedirect(req, resp, userId, email, remember);
             } else {
@@ -66,8 +69,7 @@ public class LoginServlet extends HttpServlet {
                 return;
             }
 
-            FaceIdService faceIdService = new FaceIdService();
-            List<FaceId> faceIds = faceIdDao.findAllFaceIds();
+            List<FaceId> faceIds = faceIdService.getAllFaceIds();
 
             if (faceIds == null || faceIds.isEmpty()) {
                 req.setAttribute("error", "Không có dữ liệu khuôn mặt trong hệ thống");
@@ -85,7 +87,7 @@ public class LoginServlet extends HttpServlet {
             FaceId matchedFace = faceIdService.recognizeUser(uploadedFaceToken, faceIds);
             if (matchedFace != null) {
                 int userId = matchedFace.getUser_id();
-                String email = userDAO.getEmailByUserId(userId);
+                String email = userService.getEmailByUserId(userId);
                 createSessionAndRedirect(req, resp, userId, email, null);
             } else {
                 req.setAttribute("error", "Không tìm thấy người dùng tương ứng");
@@ -103,7 +105,6 @@ public class LoginServlet extends HttpServlet {
                                           int userId, String email, String remember)
             throws IOException, SQLException {
         String userAgent = req.getHeader("User-Agent");
-        System.out.println(userAgent);
         String browserName = UserAgentUtil.getBrowserName(userAgent);
         String ip = req.getRemoteAddr();
 
@@ -114,12 +115,12 @@ public class LoginServlet extends HttpServlet {
         HttpSession session = req.getSession(true);
         String sessionId;
 
-        if (!sessionDAO.isUserAgentExists(userId, browserName)) {
+        if (!userSessionService.hasSessionWithUserAgent(userId, browserName)) {
             sessionId = UUID.randomUUID().toString();
-            sessionDAO.insertSession(sessionId, userId, ip, browserName);
+            userSessionService.createSession(sessionId, userId, ip, browserName);
         } else {
-            sessionId = sessionDAO.getSessionIdByUserAgent(userId, browserName);
-            sessionDAO.updateLoginTime(sessionId);
+            sessionId = userSessionService.getSessionIdByUserAgent(userId, browserName);
+            userSessionService.updateLoginTimestamp(sessionId);
         }
 
         session.setAttribute("userId", userId);

@@ -42,11 +42,11 @@ public class UserSessionDAO {
         return sessions;
     }
 
-    public void deleteSession(String sessionId) throws SQLException {
+    public void deleteSession(String userAgent) throws SQLException {
         try (Connection conn = DBConnection.getConnection()) {
-            String sql = "DELETE FROM user_sessions WHERE session_id = ?";
+            String sql = "DELETE FROM user_sessions WHERE user_agent = ?";
             PreparedStatement ps = conn.prepareStatement(sql);
-            ps.setString(1, sessionId);
+            ps.setString(1, userAgent);
             ps.executeUpdate();
         }
     }
@@ -99,6 +99,16 @@ public class UserSessionDAO {
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, sessionId);
             stmt.executeUpdate();
+        }
+    }
+
+    public void deleteAllSessionsExcept(int userId, String currentSessionId) throws SQLException {
+        String sql = "DELETE FROM user_sessions WHERE user_id = ? AND session_id != ?";
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, userId);
+            ps.setString(2, currentSessionId);
+            ps.executeUpdate();
         }
     }
 

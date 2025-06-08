@@ -7,6 +7,7 @@ import org.apache.http.entity.ContentType;
 import org.apache.http.entity.mime.MultipartEntityBuilder;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
+import org.example.casemd3.dao.FaceIdDao;
 import org.example.casemd3.model.FaceId;
 import org.example.casemd3.model.User;
 import org.json.JSONArray;
@@ -14,6 +15,7 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.sql.SQLException;
 import java.util.List;
 
 
@@ -23,6 +25,51 @@ public class FaceIdService {
     private final String detectUrl = "https://api-us.faceplusplus.com/facepp/v3/detect";
     private final String compareUrl = "https://api-us.faceplusplus.com/facepp/v3/compare";
     private final HttpClient client = HttpClients.createDefault();
+
+
+    private final FaceIdDao faceIdDao = new FaceIdDao();
+
+
+    /**
+     * Lấy danh sách tất cả FaceId trong hệ thống.
+     *
+     * @return List FaceId
+     * @throws SQLException Nếu lỗi truy vấn cơ sở dữ liệu.
+     */
+    public List<FaceId> getAllFaceIds() throws SQLException {
+        return faceIdDao.findAllFaceIds();
+    }
+
+    /**
+     * Lấy danh sách token FaceId của một người dùng.
+     *
+     * @param userId ID người dùng.
+     * @return List các token FaceId.
+     */
+    public List<String> getFaceTokensByUserId(int userId) {
+        return faceIdDao.getFaceTokensByUserId(userId);
+    }
+
+    /**
+     * Xóa token FaceId.
+     *
+     * @param token Token khuôn mặt cần xóa.
+     * @return true nếu xóa thành công, false nếu thất bại.
+     */
+    public boolean deleteFaceToken(String token) {
+        return faceIdDao.deleteFaceToken(token);
+    }
+
+    /**
+     * Lưu một FaceId mới vào cơ sở dữ liệu.
+     *
+     * @param faceId Đối tượng FaceId.
+     * @return true nếu lưu thành công, false nếu thất bại.
+     * @throws SQLException Nếu lỗi khi lưu vào database.
+     */
+    public boolean saveFaceId(FaceId faceId) throws SQLException {
+        return faceIdDao.save(faceId);
+    }
 
     public String detectFaceToken(InputStream imageStream) throws IOException {
         HttpPost detectPost = new HttpPost(detectUrl);
