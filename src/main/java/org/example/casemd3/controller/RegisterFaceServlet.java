@@ -8,12 +8,15 @@ import org.example.casemd3.service.FaceIdService;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.MultipartConfig;
 import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.*;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.Part;
 import java.io.IOException;
 import java.io.InputStream;
 
 @WebServlet("/register-face")
-@MultipartConfig
+@MultipartConfig(maxFileSize = 10 * 1024 * 1024) // Giới hạn 10MB
 public class RegisterFaceServlet extends HttpServlet {
 
     private FaceIdService faceService;
@@ -21,52 +24,55 @@ public class RegisterFaceServlet extends HttpServlet {
 
     @Override
     public void init() {
-        faceService = new FaceIdService(); // đã có sẵn
-        faceIdDAO = new FaceIdDao();       // DAO để lưu database
+        faceService = new FaceIdService();
+        faceIdDAO = new FaceIdDao();
     }
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        HttpSession session = req.getSession(false);
-        User user = (session != null) ? (User) session.getAttribute("currentUser") : null;
+        resp.setContentType("application/json");
+        resp.setCharacterEncoding("UTF-8");
+
+        User user = (User) req.getSession().getAttribute("currentUser");
         if (user == null) {
             resp.sendRedirect("login.jsp");
             return;
         }
 
-
-
         // Lấy ảnh từ form
-        Part imagePart = req.getPart("image");
+        Part imagePart = req.getPart("photo");
         if (imagePart == null || imagePart.getSize() == 0) {
-            resp.sendError(HttpServletResponse.SC_BAD_REQUEST, "Không có ảnh được gửi lên.");
+            sendJsonResponse(resp, false, "Không có ảnh được gửi lên.", HttpServletResponse.SC_BAD_REQUEST);
             return;
         }
 
         try (InputStream imageStream = imagePart.getInputStream()) {
             String faceToken = faceService.detectFaceToken(imageStream);
             if (faceToken == null) {
-                resp.sendError(HttpServletResponse.SC_BAD_REQUEST, "Không phát hiện khuôn mặt.");
+                sendJsonResponse(resp, false, "Không phát hiện khuôn mặt.", HttpServletResponse.SC_BAD_REQUEST);
                 return;
             }
 
-            // Tạo đối tượng FaceId, lưu vào DB
+            // Tạo và lưu FaceId
             FaceId faceId = new FaceId();
             faceId.setUser_id(user.getUser_id());
             faceId.setFaceIdToken(faceToken);
 
-            boolean saved = faceIdDAO.save(faceId);
-            if (!saved) {
-                resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Lưu Face ID thất bại.");
+            if (!faceIdDAO.save(faceId)) {
+                sendJsonResponse(resp, false, "Lưu Face ID thất bại.", HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
                 return;
             }
 
-            resp.setContentType("application/json");
-            resp.getWriter().write("{\"message\": \"Đăng ký Face ID thành công!\"}");
-
+            sendJsonResponse(resp, true, "Đăng ký Face ID thành công!", HttpServletResponse.SC_OK);
         } catch (Exception e) {
             e.printStackTrace();
-            resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Lỗi xử lý ảnh.");
+            sendJsonResponse(resp, false, "Lỗi xử lý ảnh: " + e.getMessage(), HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         }
+    }
+
+    private void sendJsonResponse(HttpServletResponse resp, boolean success, String message, int statusCode) throws IOException {
+        resp.setStatus(statusCode);
+        String jsonResponse = String.format("{\"success\": %b, \"message\": \"%s\"}", success, message.replace("\"", "\\\""));
+        resp.getWriter().write(jsonResponse);
     }
 }

@@ -64,7 +64,7 @@ public class FaceIdDao {
     }
 
     public boolean save(FaceId faceId) throws SQLException {
-        String sql = "INSERT INTO face_id (user_id, token_face) VALUES (?, ?)";
+        String sql = "INSERT INTO faceId (user_id, face_token) VALUES (?, ?)";
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, faceId.getUser_id());       // user_id

@@ -157,6 +157,7 @@
             clip-path: ellipse(45% 55% at 50% 50%);
             pointer-events: none;
             animation: glow 2s infinite alternate;
+            z-index: 10;
         }
 
         @keyframes glow {
@@ -174,6 +175,7 @@
             font-weight: 500;
             opacity: 0;
             animation: fadeInOut 5s ease-in-out forwards;
+            z-index: 20;
         }
 
         @keyframes fadeInOut {
@@ -194,6 +196,7 @@
             font-weight: bold;
             pointer-events: none;
             animation: scaleUp 1s infinite alternate;
+            z-index: 20;
         }
 
         @keyframes scaleUp {
@@ -205,6 +208,30 @@
             color: #28a745;
             font-weight: 600;
             font-size: 1.1rem;
+            animation: fadeIn 0.5s ease-in;
+            z-index: 20;
+        }
+
+        .preview-image {
+            display: none;
+            width: 400px;
+            height: 300px;
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            border-radius: 15px;
+            object-fit: cover;
+            z-index: 30;
+        }
+
+        .success-message {
+            display: none;
+            color: #28a745;
+            font-weight: 600;
+            font-size: 1.2rem;
+            text-align: center;
+            margin-top: 10px;
             animation: fadeIn 0.5s ease-in;
         }
 
@@ -312,7 +339,9 @@
                     <div id="captureStatus" class="capture-status mt-3" style="display:none;">
                         <i class="fas fa-check-circle"></i> Ảnh đã được chụp!
                     </div>
+                    <img id="imgPreview" class="preview-image" alt="Preview ảnh chụp">
                     <button type="button" class="btn btn-secondary mt-2 d-none" id="retakeBtn">Chụp lại</button>
+                    <div id="successMessage" class="success-message"></div>
                 </div>
                 <div class="modal-footer">
                     <input type="file" name="photo" id="faceImage" accept="image/*" style="display:none;" required />
@@ -334,6 +363,8 @@
     const captureStatus = document.getElementById('captureStatus');
     const countdownEl = document.getElementById('countdown');
     const retakeBtn = document.getElementById('retakeBtn');
+    const imgPreview = document.getElementById('imgPreview');
+    const successMessage = document.getElementById('successMessage');
 
     let stream;
 
@@ -372,7 +403,6 @@
 
     // Hàm chụp ảnh
     function capturePhoto() {
-        // Cập nhật kích thước canvas theo video
         canvas.width = video.videoWidth;
         canvas.height = video.videoHeight;
 
@@ -382,43 +412,78 @@
         canvas.toBlob(blob => {
             const file = new File([blob], "face_capture.png", { type: "image/png" });
 
-            // Gán ảnh vào input[type=file]
             const dataTransfer = new DataTransfer();
             dataTransfer.items.add(file);
             faceImageInput.files = dataTransfer.files;
 
-            // Hiển thị ảnh đã chụp ra img preview nếu có
-            const imgPreview = document.getElementById('imgPreview');
-            if (imgPreview) {
-                imgPreview.src = URL.createObjectURL(file);
-            }
+            imgPreview.src = URL.createObjectURL(blob);
+            imgPreview.style.display = 'block';
 
             captureStatus.style.display = 'block';
             submitBtn.disabled = false;
             retakeBtn.classList.remove('d-none');
-
             stopCamera();
         }, 'image/png');
     }
 
-
     // Hàm chụp lại
     function retakePhoto() {
         captureStatus.style.display = 'none';
+        imgPreview.style.display = 'none';
+        successMessage.style.display = 'none';
         submitBtn.disabled = true;
         retakeBtn.classList.add('d-none');
         faceImageInput.value = null;
+        imgPreview.src = '';
+        successMessage.textContent = '';
         startCamera();
         startCountdown(10, capturePhoto);
+    }
+
+    // Hàm gửi form và xử lý phản hồi
+    async function submitForm() {
+        const formData = new FormData(document.getElementById('faceForm'));
+
+        try {
+            const response = await fetch('register-face', {
+                method: 'POST',
+                body: formData
+            });
+
+            const result = await response.json();
+
+            if (result.success) {
+                successMessage.textContent = result.message || 'Đăng ký Face ID thành công!';
+                successMessage.style.display = 'block';
+                captureStatus.style.display = 'none';
+                imgPreview.style.display = 'none';
+                submitBtn.disabled = true;
+                retakeBtn.classList.add('d-none');
+                faceImageInput.value = null;
+                imgPreview.src = '';
+                setTimeout(() => {
+                    const modal = bootstrap.Modal.getInstance(document.getElementById('registerFaceModal'));
+                    modal.hide();
+                }, 2000); // Tự động đóng modal sau 2 giây
+            } else {
+                alert(result.message || 'Đăng ký thất bại. Vui lòng thử lại!');
+            }
+        } catch (error) {
+            alert('Lỗi khi gửi dữ liệu: ' + error.message);
+        }
     }
 
     // Khi modal được mở
     const modalEl = document.getElementById('registerFaceModal');
     modalEl.addEventListener('show.bs.modal', () => {
         captureStatus.style.display = 'none';
+        imgPreview.style.display = 'none';
+        successMessage.style.display = 'none';
         submitBtn.disabled = true;
         retakeBtn.classList.add('d-none');
         faceImageInput.value = null;
+        imgPreview.src = '';
+        successMessage.textContent = '';
         countdownEl.textContent = '';
         startCamera();
         startCountdown(10, capturePhoto);
@@ -427,16 +492,35 @@
     // Khi modal đóng
     modalEl.addEventListener('hidden.bs.modal', () => {
         stopCamera();
+        imgPreview.style.display = 'none';
+        imgPreview.src = '';
+        successMessage.style.display = 'none';
+        successMessage.textContent = '';
     });
 
     // Xử lý nút chụp lại
     retakeBtn.addEventListener('click', retakePhoto);
 
+    // Xử lý nút Đăng ký
+    submitBtn.addEventListener('click', (e) => {
+        e.preventDefault(); // Ngăn submit mặc định
+        submitForm();
+    });
+
     // Nếu người dùng bấm hủy hoặc đóng modal
     document.getElementById('cancelBtn').addEventListener('click', () => {
         stopCamera();
+        imgPreview.style.display = 'none';
+        imgPreview.src = '';
+        successMessage.style.display = 'none';
+        successMessage.textContent = '';
     });
     document.getElementById('closeModalBtn').addEventListener('click', () => {
         stopCamera();
+        imgPreview.style.display = 'none';
+        imgPreview.src = '';
+        successMessage.style.display = 'none';
+        successMessage.textContent = '';
     });
 </script>
+</html>
