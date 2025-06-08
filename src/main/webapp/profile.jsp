@@ -230,7 +230,7 @@
                     <li class="nav-item"><a class="nav-link active" href="profile"><i class="fas fa-user"></i> Thông tin cá nhân</a></li>
                     <li class="nav-item"><a class="nav-link" href="change-password.jsp"><i class="fas fa-lock"></i> Đổi mật khẩu</a></li>
                     <li class="nav-item"><a class="nav-link" href="session-list"><i class="fas fa-desktop"></i> Kiểm tra thiết bị đăng nhập</a></li>
-                    <li class="nav-item"><a class="nav-link" href="face_id.jsp"><i class="fas fa-user-circle"></i> Face ID</a></li>
+                    <li class="nav-item"><a class="nav-link" href="face_id"><i class="fas fa-user-circle"></i> Face ID</a></li>
                     <li class="nav-item"><a class="nav-link" href="logout"><i class="fas fa-sign-out-alt"></i> Đăng xuất</a></li>
                 </ul>
             </div>

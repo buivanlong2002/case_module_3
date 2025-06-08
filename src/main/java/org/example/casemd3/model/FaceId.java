@@ -9,5 +9,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class FaceId {
     private int id;
+    private int user_id;
     private String faceIdToken;
 }

@@ -18,7 +18,7 @@
             border-radius: 12px;
             box-shadow: 0 0 15px rgba(0,0,0,0.1);
         }
-        #faceLoginForm {
+        #video, #canvas {
             display: none;
         }
     </style>
@@ -53,15 +53,14 @@
 
         <hr>
 
-        <!-- Nút kích hoạt đăng nhập bằng khuôn mặt -->
+        <!-- Nút đăng nhập bằng khuôn mặt -->
         <button type="button" class="btn btn-success w-100" onclick="startFaceLogin()">Đăng nhập bằng Face ID</button>
 
-        <!-- Form đăng nhập bằng khuôn mặt -->
-        <form id="faceLoginForm" action="login" method="post" enctype="multipart/form-data">
-            <input type="hidden" name="method" value="face">
-            <input type="file" name="photo" accept="image/*" class="form-control mt-3" required>
-            <button type="submit" class="btn btn-secondary mt-2 w-100">Xác thực khuôn mặt</button>
-        </form>
+        <!-- Camera ẩn -->
+        <video id="video" autoplay playsinline></video>
+        <canvas id="canvas"></canvas>
+
+        <p id="faceStatus" class="text-center mt-3 text-secondary" style="display: none;">Đang nhận diện khuôn mặt...</p>
 
         <p class="text-center mt-3">
             Chưa có tài khoản?
@@ -72,7 +71,51 @@
 
 <script>
     function startFaceLogin() {
-        document.getElementById('faceLoginForm').style.display = 'block';
+        const video = document.getElementById("video");
+        const canvas = document.getElementById("canvas");
+        const statusText = document.getElementById("faceStatus");
+
+        statusText.style.display = "block";
+        statusText.textContent = "Đang mở camera...";
+
+        navigator.mediaDevices.getUserMedia({ video: true })
+            .then(stream => {
+                video.srcObject = stream;
+
+                // Chờ 2 giây rồi chụp ảnh
+                setTimeout(() => {
+                    statusText.textContent = "Đang xác thực...";
+
+                    const ctx = canvas.getContext("2d");
+                    canvas.width = video.videoWidth;
+                    canvas.height = video.videoHeight;
+                    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+                    // Tắt camera
+                    stream.getTracks().forEach(track => track.stop());
+
+                    // Gửi ảnh
+                    canvas.toBlob(blob => {
+                        const formData = new FormData();
+                        formData.append("method", "face");
+                        formData.append("photo", blob, "face.jpg");
+
+                        fetch("login", {
+                            method: "POST",
+                            body: formData
+                        })
+                            .then(response => response.text())
+                            .then(html => {
+                                document.open();
+                                document.write(html);
+                                document.close();
+                            });
+                    }, "image/jpeg");
+                }, 1500);
+            })
+            .catch(err => {
+                alert("Không thể truy cập camera: " + err.message);
+            });
     }
 </script>
 
