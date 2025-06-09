@@ -19,6 +19,7 @@ public class RegisterServlet extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        req.setCharacterEncoding("UTF-8");
         String method = req.getParameter("method");
         if (!"account".equals(method)) {
             req.setAttribute("error", "Phương thức không hợp lệ.");

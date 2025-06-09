@@ -1,5 +1,6 @@
 package org.example.casemd3.controller;
 
+import eu.bitwalker.useragentutils.UserAgent;
 import org.example.casemd3.dao.UserSessionDAO;
 import org.example.casemd3.model.User;
 import org.example.casemd3.model.UserSession;
@@ -22,6 +23,7 @@ public class LogoutOtherDevicesServlet extends HttpServlet {
     protected void doGet(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
 
+
         HttpSession session = req.getSession(false);
         if (session == null || session.getAttribute("currentUser") == null) {
             resp.sendRedirect("login.jsp");
@@ -32,17 +34,21 @@ public class LogoutOtherDevicesServlet extends HttpServlet {
         int userId = currentUser.getUser_id();
 
         // Lấy User-Agent đầy đủ của thiết bị hiện tại
-        String currentUserAgent = req.getHeader("User-Agent");
-        System.out.println("User-Agent hiện tại: " + currentUserAgent);
+        String userAgentString = req.getHeader("User-Agent");
+        UserAgent userAgent = UserAgent.parseUserAgentString(userAgentString);
+
+        String browserName = userAgent.getBrowser().getName();                // Chrome, Firefox, v.v.
+        String osName = userAgent.getOperatingSystem().getName();            // Windows, Android, iOS, ...
+        String deviceType = userAgent.getOperatingSystem().getDeviceType().getName(); // COMPUTER, MOBILE, ...
 
         try {
             List<UserSession> sessions = sessionDAO.getSessionsByUser(userId);
 
             for (UserSession us : sessions) {
                 // So sánh full User-Agent string
-                if (!us.getUserAgent().equals(currentUserAgent)) {
+                if (!us.getUserAgent().equals(browserName)) {
                     System.out.println("Xóa session khác User-Agent: " + us.getUserAgent());
-                    sessionDAO.deleteSession(us.getSessionId());  // xóa bằng sessionId cho chính xác
+                    sessionDAO.deleteBySessionId(us.getSessionId());
                 } else {
                     System.out.println("Giữ lại session hiện tại: " + us.getUserAgent());
                 }

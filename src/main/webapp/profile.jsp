@@ -170,6 +170,17 @@
                 padding: 8px 12px;
             }
         }
+        .data-value {
+
+            color: #121111;            /* màu xanh dương nổi bật */
+            font-weight: 450;          /* chữ đậm vừa phải */
+            letter-spacing: 0.02em;    /* khoảng cách chữ */
+            margin-left: 6px;          /* cách ra khỏi label */
+        }
+
+
+
+
     </style>
 </head>
 <body>
@@ -181,7 +192,7 @@
                 <div class="text-center mb-4">
                     <div class="profile-img-wrapper" title="Thay đổi ảnh đại diện">
                         <img src="<%= user.getImage() != null ? user.getImage() : "default.png" %>"
-                             alt="Avatar mặc định" class="profile-img"/>
+                             alt="" class="profile-img"/>
                         <a href="change-avatar.jsp" class="edit-icon" aria-label="Thay đổi ảnh đại diện">
                             <i class="fas fa-pencil-alt"></i>
                         </a>
@@ -203,25 +214,45 @@
             <div class="content" id="personal-info">
                 <h4 class="mb-3"><i class="fas fa-user"></i> Thông tin cá nhân</h4>
                 <hr>
-                <div class="personal-info-card">
+                <div class="personal-info-card shadow-sm p-4 rounded">
+                    <h3 class="card-title mb-4">Thông tin cá nhân</h3>
+
                     <div class="info-item">
-                        <i class="fas fa-envelope"></i>
-                        <strong>Email:</strong> <%= user.getEmail() %>
+                        <i class="fas fa-envelope icon"></i>
+                        <div>
+                            <strong>Email:</strong>
+                            <span class="data-value"><%= user.getEmail() %></span>
+                        </div>
                     </div>
+
                     <div class="info-item">
-                        <i class="fas fa-phone"></i>
-                        <strong>Số điện thoại:</strong> <%= user.getPhone() != null ? user.getPhone() : "Chưa cập nhật" %>
+                        <i class="fas fa-phone icon"></i>
+                        <div>
+                            <strong>Số điện thoại:</strong>
+                            <span class="data-value"><%= user.getPhone() != null ? user.getPhone() : "Chưa cập nhật" %></span>
+                        </div>
                     </div>
+
                     <div class="info-item">
-                        <i class="fas fa-calendar"></i>
-                        <strong>Ngày sinh:</strong> <%= user.getBirthday() != null ? user.getBirthday().toString() : "Chưa cập nhật" %>
+                        <i class="fas fa-calendar icon"></i>
+                        <div>
+                            <strong>Ngày sinh:</strong>
+                            <span class="data-value"><%= user.getBirthday() != null ? user.getBirthday().toString() : "Chưa cập nhật" %></span>
+                        </div>
                     </div>
+
                     <div class="info-item">
-                        <i class="fas fa-map-marker-alt"></i>
-                        <strong>Địa chỉ:</strong> <%= user.getAddress() != null ? user.getAddress() : "Chưa cập nhật" %>
+                        <i class="fas fa-map-marker-alt icon"></i>
+                        <div>
+                            <strong>Địa chỉ:</strong>
+                            <span class="data-value"><%= user.getAddress() != null ? user.getAddress() : "Chưa cập nhật" %></span>
+                        </div>
                     </div>
-                    <a href="editProfile.jsp" class="btn btn-primary mt-3">Chỉnh sửa thông tin</a>
                 </div>
+
+                <a href="editProfile.jsp" class="btn btn-primary mt-4 w-100">Chỉnh sửa thông tin</a>
+                </div>
+
             </div>
         </div>
     </div>

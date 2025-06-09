@@ -214,6 +214,11 @@
                                value="<%= user.getBirthday() != null ? user.getBirthday().toString() : "" %>">
                     </div>
                     <div class="mb-3">
+                        <label for="username" class="form-label">Họ và Tên</label>
+                        <input type="text" class="form-control" id="username" name="username"
+                               value="<%= user.getUsername() != null ? user.getUsername() : "" %>">
+                    </div>
+                    <div class="mb-3">
                         <label for="address" class="form-label">Địa chỉ</label>
                         <input type="text" class="form-control" id="address" name="address"
                                value="<%= user.getAddress() != null ? user.getAddress() : "" %>">

@@ -18,6 +18,7 @@ public class RemoteLogoutServlet extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        req.setCharacterEncoding("UTF-8");
         HttpSession currentSession = req.getSession(false);
         if (currentSession == null || currentSession.getAttribute("userId") == null) {
             resp.sendRedirect("login.jsp");

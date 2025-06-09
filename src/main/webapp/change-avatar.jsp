@@ -49,9 +49,9 @@
 <div class="avatar-container">
     <h4 class="text-center mb-4">Thay đổi ảnh đại diện</h4>
 
-    <!-- Avatar hiện tại -->
-    <img id="preview" src="<%= user.getImage() != null ? user.getImage() : "default.png" %>"
-         alt="Avatar hiện tại" class="avatar-preview" />
+
+    <img src="<%= user.getImage() != null ? user.getImage() : "default.png" %>"
+         alt="" class="profile-img"/>
 
     <form action="ChangeAvatarServlet" method="post" enctype="multipart/form-data">
         <div class="mb-3">

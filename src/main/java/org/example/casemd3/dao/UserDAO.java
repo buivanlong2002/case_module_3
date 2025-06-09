@@ -97,21 +97,23 @@ public class UserDAO {
     }
 
     public static boolean updateProfile(User user) {
-        String sql = "UPDATE users SET phone = ?, birthday = ?, address = ? WHERE user_id = ?";
+        String sql = "UPDATE users SET email = ?, username = ?, phone = ?, birthday = ?, address = ? WHERE user_id = ?";
 
-        try (Connection conn = DBConnection.getConnection(); // bạn dùng cách nào để lấy Connection thì thay thế
+        try (Connection conn = DBConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
 
-            ps.setString(1, user.getPhone());
+            ps.setString(1, user.getEmail());
+            ps.setString(2, user.getUsername());
+            ps.setString(3, user.getPhone());
 
             if (user.getBirthday() != null) {
-                ps.setDate(2, new Date(user.getBirthday().getTime())); // chuyển java.util.Date hoặc java.sql.Date đều được
+                ps.setDate(4, new Date(user.getBirthday().getTime()));
             } else {
-                ps.setNull(2, java.sql.Types.DATE);
+                ps.setNull(4, java.sql.Types.DATE);
             }
 
-            ps.setString(3, user.getAddress());
-            ps.setInt(4, user.getUser_id());
+            ps.setString(5, user.getAddress());
+            ps.setInt(6, user.getUser_id());
 
             int rows = ps.executeUpdate();
             return rows > 0;
@@ -121,5 +123,6 @@ public class UserDAO {
             return false;
         }
     }
+
 }
 

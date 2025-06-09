@@ -17,6 +17,7 @@ public class LogoutServlet extends HttpServlet {
     private final UserSessionService sessionService = new UserSessionService();
 
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        req.setCharacterEncoding("UTF-8");
         HttpSession httpSession = req.getSession(false);
         if (httpSession != null) {
             String sessionId = (String) httpSession.getAttribute("sessionId");

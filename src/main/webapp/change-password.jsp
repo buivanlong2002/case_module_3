@@ -169,7 +169,7 @@
                 <div class="text-center mb-4">
                     <div class="profile-img-wrapper" title="Thay đổi ảnh đại diện">
                         <img src="<%= user.getImage() != null ? user.getImage() : "default.png" %>"
-                             alt="Avatar mặc định" class="profile-img"/>
+                             alt="" class="profile-img"/>
                         <a href="change-avatar.jsp" class="edit-icon" aria-label="Thay đổi ảnh đại diện">
                             <i class="fas fa-pencil-alt"></i>
                         </a>

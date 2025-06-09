@@ -28,23 +28,27 @@ public class UpdateProfileServlet extends HttpServlet {
             return;
         }
 
+        String email = request.getParameter("email");
+        String username = request.getParameter("username");
         String phone = request.getParameter("phone");
         String birthdayStr = request.getParameter("birthday");
         String address = request.getParameter("address");
 
+        // Cập nhật vào đối tượng user
+        currentUser.setEmail(email);
+        currentUser.setUsername(username);
         currentUser.setPhone(phone);
         if (birthdayStr != null && !birthdayStr.isEmpty()) {
-            currentUser.setBirthday(java.sql.Date.valueOf(birthdayStr));  // Nếu User dùng java.sql.Date
+            currentUser.setBirthday(java.sql.Date.valueOf(birthdayStr));
         } else {
             currentUser.setBirthday(null);
         }
         currentUser.setAddress(address);
 
-        // Cập nhật vào DB (giả sử có hàm update trong UserDAO)
         boolean updated = UserDAO.updateProfile(currentUser);
         if (updated) {
             session.setAttribute("currentUser", currentUser);
-            response.sendRedirect("profile"); // trang profile sau khi cập nhật
+            response.sendRedirect("profile");
         } else {
             request.setAttribute("error", "Cập nhật thông tin thất bại.");
             request.getRequestDispatcher("/edit-profile.jsp").forward(request, response);
