@@ -1,14 +1,15 @@
-# Bước 1: Dùng image Tomcat 9 làm base
+# Sử dụng Tomcat 9 làm base image
 FROM tomcat:9.0
 
-# Bước 2: Xóa các ứng dụng mặc định trong Tomcat
+# Xóa các ứng dụng mặc định trong Tomcat
 RUN rm -rf /usr/local/tomcat/webapps/*
 
-# Bước 3: Copy WAR đã build từ Maven sang Tomcat
+# Copy file WAR từ thư mục target vào thư mục webapps của Tomcat, đổi tên thành ROOT.war để triển khai ứng dụng mặc định
 COPY target/Case-MD3-1.0-SNAPSHOT.war /usr/local/tomcat/webapps/ROOT.war
 
-# Tomcat mặc định chạy ở cổng 8080
+# Expose cổng 8080 (mặc định Tomcat chạy cổng này)
 EXPOSE 8080
 
-# Mặc định CMD để chạy Tomcat
+# Lệnh khởi chạy Tomcat khi container chạy
 CMD ["catalina.sh", "run"]
+
