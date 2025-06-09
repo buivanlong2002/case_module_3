@@ -61,7 +61,7 @@ public class ChangePasswordServlet extends HttpServlet {
 
         try {
             boolean isCurrentPasswordCorrect = userService.checkPassword(user.getUser_id(), currentPassword);
-            if (!isCurrentPasswordCorrect) {
+            if (isCurrentPasswordCorrect) {
                 req.setAttribute("errorCurrentPassword", "Mật khẩu hiện tại không đúng.");
                 req.getRequestDispatcher("change-password.jsp").forward(req, resp);
                 return;

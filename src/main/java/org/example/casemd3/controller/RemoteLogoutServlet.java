@@ -1,9 +1,7 @@
 package org.example.casemd3.controller;
 
-import org.example.casemd3.dao.UserSessionDAO;
 import org.example.casemd3.model.UserSession;
 import org.example.casemd3.service.UserSessionService;
-import org.example.casemd3.util.UserAgentUtil;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -12,52 +10,51 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
-import java.sql.SQLException;
 import java.util.List;
 
 @WebServlet("/remote-logout")
 public class RemoteLogoutServlet extends HttpServlet {
     private final UserSessionService userSessionService = new UserSessionService();
 
+    @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        HttpSession httpSession = req.getSession(false);
-        if (httpSession == null || httpSession.getAttribute("userId") == null) {
+        HttpSession currentSession = req.getSession(false);
+        if (currentSession == null || currentSession.getAttribute("userId") == null) {
             resp.sendRedirect("login.jsp");
             return;
         }
 
-        int userId = (Integer) httpSession.getAttribute("userId");
-        String sessionId = req.getParameter("sessionId");
+        int userId = (Integer) currentSession.getAttribute("userId");
+        String targetSessionId = req.getParameter("sessionId");
 
-        if (sessionId == null || sessionId.isEmpty()) {
+        if (targetSessionId == null || targetSessionId.isEmpty()) {
             resp.sendRedirect("session-list");
             return;
         }
 
         try {
-
-            List<UserSession> sessions = userSessionService.getSessionsByUser(userId);
-
-            boolean belongsToUser = sessions.stream()
-                    .anyMatch(s -> s.getSessionId().equals(sessionId));
+            List<UserSession> userSessions = userSessionService.getSessionsByUser(userId);
+            boolean belongsToUser = userSessions.stream()
+                    .anyMatch(session -> session.getSessionId().equals(targetSessionId));
 
             if (!belongsToUser) {
-                resp.sendError(HttpServletResponse.SC_FORBIDDEN, "Phiên đăng nhập không thuộc về bạn");
+                resp.sendError(HttpServletResponse.SC_FORBIDDEN, "Phiên đăng nhập không thuộc về bạn.");
                 return;
             }
-            String userAgent = req.getHeader("User-Agent");
-            String browserName = UserAgentUtil.getBrowserName(userAgent);
-            userSessionService.deleteSessionByUserAgent(browserName);
 
-            String currentSessionId = httpSession.getId();
-            if (sessionId.equals(currentSessionId)) {
-                httpSession.invalidate();
+            // Nếu là phiên hiện tại thì xóa DB + invalidate session
+            String currentSessionId = currentSession.getId();
+            userSessionService.deleteSessionBySessionId(targetSessionId);
+
+            if (targetSessionId.equals(currentSessionId)) {
+                currentSession.invalidate();
                 resp.sendRedirect("login.jsp");
             } else {
                 resp.sendRedirect("session-list");
             }
+
         } catch (Exception e) {
-            throw new ServletException(e);
+            throw new ServletException("Lỗi khi đăng xuất từ xa", e);
         }
     }
 }

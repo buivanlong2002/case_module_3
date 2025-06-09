@@ -9,10 +9,13 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+
+import static org.example.casemd3.util.DBConnection.getConnection;
+
 public class UserSessionDAO {
 
     public void insertSession(String sessionId, int userId, String ip, String userAgent) throws SQLException {
-        try (Connection conn = DBConnection.getConnection()) {
+        try (Connection conn = getConnection()) {
             String sql = "INSERT INTO user_sessions(session_id, user_id, login_time, ip_address, user_agent) VALUES (?, ?, NOW(), ?, ?)";
             PreparedStatement ps = conn.prepareStatement(sql);
             ps.setString(1, sessionId);
@@ -25,7 +28,7 @@ public class UserSessionDAO {
 
     public List<UserSession> getSessionsByUser(int userId) throws SQLException {
         List<UserSession> sessions = new ArrayList<>();
-        try (Connection conn = DBConnection.getConnection()) {
+        try (Connection conn = getConnection()) {
             String sql = "SELECT session_id, login_time, ip_address, user_agent FROM user_sessions WHERE user_id = ?";
             PreparedStatement ps = conn.prepareStatement(sql);
             ps.setInt(1, userId);
@@ -42,18 +45,11 @@ public class UserSessionDAO {
         return sessions;
     }
 
-    public void deleteSession(String userAgent) throws SQLException {
-        try (Connection conn = DBConnection.getConnection()) {
-            String sql = "DELETE FROM user_sessions WHERE user_agent = ?";
-            PreparedStatement ps = conn.prepareStatement(sql);
-            ps.setString(1, userAgent);
-            ps.executeUpdate();
-        }
-    }
+
 
     public boolean isUserAgentExists(int userId, String userAgent) {
         String sql = "SELECT * FROM user_sessions WHERE user_id = ? AND user_agent = ?";
-        try (Connection conn = DBConnection.getConnection();
+        try (Connection conn = getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, userId);
             ps.setString(2, userAgent);
@@ -67,7 +63,7 @@ public class UserSessionDAO {
 
     public String getSessionIdByUserAgent(int userId, String userAgent) {
         String sql = "SELECT session_id FROM user_sessions WHERE user_id = ? AND user_agent = ?";
-        try (Connection conn = DBConnection.getConnection();
+        try (Connection conn = getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, userId);
             ps.setString(2, userAgent);
@@ -82,7 +78,7 @@ public class UserSessionDAO {
     }
     public boolean isSessionValid(int userId, String sessionId) {
         String sql = "SELECT 1 FROM user_sessions WHERE user_id = ? AND session_id = ?";
-        try (Connection conn = DBConnection.getConnection();
+        try (Connection conn = getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, userId);
             ps.setString(2, sessionId);
@@ -95,7 +91,7 @@ public class UserSessionDAO {
     }
     public void updateLoginTime(String sessionId) throws SQLException {
         String sql = "UPDATE case_module_3.user_sessions SET login_time = CURRENT_TIMESTAMP WHERE session_id = ?";
-        try (Connection conn = DBConnection.getConnection();
+        try (Connection conn = getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, sessionId);
             stmt.executeUpdate();
@@ -104,7 +100,7 @@ public class UserSessionDAO {
 
     public void deleteAllSessionsExcept(int userId, String currentSessionId) throws SQLException {
         String sql = "DELETE FROM user_sessions WHERE user_id = ? AND session_id != ?";
-        try (Connection conn = DBConnection.getConnection();
+        try (Connection conn = getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, userId);
             ps.setString(2, currentSessionId);
@@ -112,5 +108,21 @@ public class UserSessionDAO {
         }
     }
 
+    public void deleteBySessionId(String sessionId) throws SQLException {
+        String sql = "DELETE FROM user_sessions WHERE session_id = ?";
+        try (Connection conn = getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, sessionId);
+            stmt.executeUpdate();
+        }
+    }
+    public void deleteSession(String userAgent) throws SQLException {
+        try (Connection conn = getConnection()) {
+            String sql = "DELETE FROM user_sessions WHERE user_agent = ?";
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setString(1, userAgent);
+            ps.executeUpdate();
+        }
+    }
 
 }

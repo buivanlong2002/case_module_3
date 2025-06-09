@@ -117,5 +117,9 @@ public class UserSessionService {
             e.printStackTrace();
         }
     }
+
+    public void deleteSessionBySessionId(String sessionId) throws SQLException {
+        userSessionDAO.deleteBySessionId(sessionId);
+    }
 }
 
