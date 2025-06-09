@@ -1,26 +1,27 @@
-# Stage 1: Build ứng dụng bằng Maven
-FROM maven:3.8.5-openjdk-17 AS build
+# Stage 1: Build project bằng Maven
+FROM maven:3.8.7-jdk-8 AS build
 
-# Đặt thư mục làm việc trong container
+# Thư mục làm việc trong container
 WORKDIR /app
 
-# Copy toàn bộ source code vào container
-COPY . .
+# Copy file cấu hình pom.xml và mã nguồn vào container
+COPY pom.xml .
+COPY src ./src
 
-# Build project, tạo file .war (bỏ qua test để nhanh hơn)
+# Build project và tạo file WAR trong thư mục target
 RUN mvn clean package -DskipTests
 
-# Stage 2: Chạy file WAR trên Tomcat 9
+# Stage 2: Chạy app với Tomcat
 FROM tomcat:9.0
 
-# Xóa các ứng dụng mặc định trong Tomcat
+# Xóa các ứng dụng mặc định của Tomcat
 RUN rm -rf /usr/local/tomcat/webapps/*
 
-# Copy file WAR được build ở stage 1 vào thư mục webapps của Tomcat
-COPY --from=build /app/target/*.war /usr/local/tomcat/webapps/ROOT.war
+# Copy file WAR từ stage build sang Tomcat webapps và đổi tên thành ROOT.war
+COPY --from=build /app/target/Case-MD3-1.0-SNAPSHOT.war /usr/local/tomcat/webapps/ROOT.war
 
-# Mở port 8080 mặc định của Tomcat
+# Expose port mặc định của Tomcat
 EXPOSE 8080
 
-# Lệnh chạy Tomcat khi container khởi động
+# Lệnh chạy Tomcat
 CMD ["catalina.sh", "run"]
