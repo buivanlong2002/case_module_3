@@ -28,5 +28,5 @@ COPY --from=build /app/target/Case-MD3-1.0-SNAPSHOT.war /usr/local/tomcat/webapp
 # Mở cổng 8080
 EXPOSE 8080
 
-# Lệnh chạy Tomcat
+# Lệnh chạy Tomcat  a
 CMD ["catalina.sh", "run"]
