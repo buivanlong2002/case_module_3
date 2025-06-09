@@ -5,7 +5,7 @@ FROM tomcat:9.0
 RUN rm -rf /usr/local/tomcat/webapps/*
 
 # Bước 3: Copy WAR đã build từ Maven sang Tomcat
-COPY target/Case-MD3.war /usr/local/tomcat/webapps/ROOT.war
+COPY target/Case-MD3-1.0-SNAPSHOT.war /usr/local/tomcat/webapps/ROOT.war
 
 # Tomcat mặc định chạy ở cổng 8080
 EXPOSE 8080
