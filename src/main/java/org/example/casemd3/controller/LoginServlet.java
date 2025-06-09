@@ -7,6 +7,9 @@ import org.example.casemd3.service.FaceIdService;
 import org.example.casemd3.service.UserService;
 import org.example.casemd3.service.UserSessionService;
 import org.example.casemd3.util.UserAgentUtil;
+import eu.bitwalker.useragentutils.UserAgent;
+import eu.bitwalker.useragentutils.Browser;
+import eu.bitwalker.useragentutils.OperatingSystem;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.MultipartConfig;
@@ -101,16 +104,38 @@ public class LoginServlet extends HttpServlet {
         }
     }
 
+
     private void createSessionAndRedirect(HttpServletRequest req, HttpServletResponse resp,
                                           int userId, String email, String remember)
             throws IOException, SQLException {
-        String userAgent = req.getHeader("User-Agent");
-        String browserName = UserAgentUtil.getBrowserName(userAgent);
-        String ip = req.getRemoteAddr();
+
+        // Phân tích User-Agent
+        String userAgentString = req.getHeader("User-Agent");
+        UserAgent userAgent = UserAgent.parseUserAgentString(userAgentString);
+
+        String browserName = userAgent.getBrowser().getName();                // Chrome, Firefox, v.v.
+        String osName = userAgent.getOperatingSystem().getName();            // Windows, Android, iOS, ...
+        String deviceType = userAgent.getOperatingSystem().getDeviceType().getName(); // COMPUTER, MOBILE, ...
+
+        // Lấy IP từ header X-Forwarded-For nếu có
+        String ip = req.getHeader("X-Forwarded-For");
+        if (ip != null && !ip.isEmpty() && !"unknown".equalsIgnoreCase(ip)) {
+            ip = ip.split(",")[0].trim(); // lấy IP đầu tiên
+        } else {
+            ip = req.getRemoteAddr();
+        }
 
         if ("0:0:0:0:0:0:0:1".equals(ip) || "::1".equals(ip)) {
             ip = "127.0.0.1";
         }
+
+        // In thông tin ra console
+        System.out.println("==== THÔNG TIN THIẾT BỊ ĐĂNG NHẬP ====");
+        System.out.println("IP: " + ip);
+        System.out.println("Trình duyệt: " + browserName);
+        System.out.println("Hệ điều hành: " + osName);
+        System.out.println("Loại thiết bị: " + deviceType);
+        System.out.println("======================================");
 
         HttpSession session = req.getSession(true);
         String sessionId;
@@ -138,4 +163,5 @@ public class LoginServlet extends HttpServlet {
 
         resp.sendRedirect("/profile");
     }
+
 }
