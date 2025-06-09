@@ -4,11 +4,16 @@ FROM maven:3.8.7-jdk-8 AS build
 # Thư mục làm việc trong container
 WORKDIR /app
 
-# Copy file cấu hình pom.xml và mã nguồn vào container
+# Copy file cấu hình pom.xml trước để tận dụng cache docker khi dependencies không thay đổi
 COPY pom.xml .
+
+# Tải dependency trước (để tăng tốc build)
+RUN mvn dependency:go-offline
+
+# Copy toàn bộ mã nguồn vào container
 COPY src ./src
 
-# Build project và tạo file WAR trong thư mục target
+# Build project và tạo file WAR trong thư mục target, bỏ qua test để build nhanh hơn
 RUN mvn clean package -DskipTests
 
 # Stage 2: Chạy app với Tomcat
