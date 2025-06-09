@@ -90,7 +90,7 @@ public class UserSessionDAO {
         }
     }
     public void updateLoginTime(String sessionId) throws SQLException {
-        String sql = "UPDATE case_module_3.user_sessions SET login_time = CURRENT_TIMESTAMP WHERE session_id = ?";
+        String sql = "UPDATE user_sessions SET login_time = CURRENT_TIMESTAMP WHERE session_id = ?";
         try (Connection conn = getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, sessionId);

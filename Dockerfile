@@ -8,7 +8,7 @@ RUN rm -rf /usr/local/tomcat/webapps/*
 
 COPY target/Case-MD3-1.0-SNAPSHOT.war /usr/local/tomcat/webapps/ROOT.war
 
-=======
+
 # Sử dụng Tomcat 9 làm base image
 FROM tomcat:9.0
 

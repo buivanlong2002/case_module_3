@@ -8,9 +8,9 @@ public class DBConnection {
     public static Connection getConnection() throws SQLException {
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
-            String url = "jdbc:mysql://localhost:3333/case_module_3";
+            String url = "jdbc:mysql://gondola.proxy.rlwy.net:11091/railway";
             String user = "root";
-            String pass = "123456";
+            String pass = "PjxtSxlkWLrrdUVwuXbPcPKiTiSFHzTG";
             return DriverManager.getConnection(url, user, pass);
         } catch (ClassNotFoundException e) {
             throw new SQLException("Không tìm thấy driver JDBC", e);
