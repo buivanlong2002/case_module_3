@@ -3,7 +3,6 @@ package org.example.casemd3.controller;
 import org.example.casemd3.dao.UserSessionDAO;
 import org.example.casemd3.model.User;
 import org.example.casemd3.model.UserSession;
-import org.example.casemd3.util.UserAgentUtil;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -31,26 +30,30 @@ public class LogoutOtherDevicesServlet extends HttpServlet {
 
         User currentUser = (User) session.getAttribute("currentUser");
         int userId = currentUser.getUser_id();
-        String userAgent = req.getHeader("User-Agent");
-        String browserName = UserAgentUtil.getBrowserName(userAgent);
-        System.out.println(userAgent);
+
+        // Lấy User-Agent đầy đủ của thiết bị hiện tại
+        String currentUserAgent = req.getHeader("User-Agent");
+        System.out.println("User-Agent hiện tại: " + currentUserAgent);
+
         try {
             List<UserSession> sessions = sessionDAO.getSessionsByUser(userId);
 
             for (UserSession us : sessions) {
-                if (!us.getUserAgent().equals(browserName)) {
-                    sessionDAO.deleteSession(us.getUserAgent());
+                // So sánh full User-Agent string
+                if (!us.getUserAgent().equals(currentUserAgent)) {
+                    System.out.println("Xóa session khác User-Agent: " + us.getUserAgent());
+                    sessionDAO.deleteSession(us.getSessionId());  // xóa bằng sessionId cho chính xác
+                } else {
+                    System.out.println("Giữ lại session hiện tại: " + us.getUserAgent());
                 }
             }
 
-            req.setAttribute("message", " Bạn đã đăng xuất khỏi tất cả thiết bị khác.");
+            req.setAttribute("message", "Bạn đã đăng xuất khỏi tất cả thiết bị khác.");
         } catch (SQLException e) {
             e.printStackTrace();
-            req.setAttribute("message", " Có lỗi khi đăng xuất thiết bị khác.");
+            req.setAttribute("message", "Có lỗi khi đăng xuất thiết bị khác.");
         }
 
         req.getRequestDispatcher("change-password.jsp").forward(req, resp);
     }
-
-
 }
