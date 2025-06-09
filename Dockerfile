@@ -1,4 +1,4 @@
-<<<<<<< HEAD
+
 
 FROM tomcat:9.0
 
@@ -19,7 +19,7 @@ RUN rm -rf /usr/local/tomcat/webapps/*
 COPY target/Case-MD3-1.0-SNAPSHOT.war /usr/local/tomcat/webapps/ROOT.war
 
 # Expose cổng 8080 (mặc định Tomcat chạy cổng này)
->>>>>>> 58c76fc6827fb7911213097b53599bb38551a5ac
+
 EXPOSE 8080
 
 # Lệnh khởi chạy Tomcat khi container chạy
