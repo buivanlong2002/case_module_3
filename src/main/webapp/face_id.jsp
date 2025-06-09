@@ -339,7 +339,7 @@
                         <table class="table table-bordered align-middle mt-3">
                             <thead class="table-light">
                             <tr>
-                                <th style="width: 5%;">#</th>
+                                <th style="width: 5%;">STT</th>
                                 <th>Face Token</th>
                                 <th style="width: 15%;">Hành động</th>
                             </tr>
@@ -348,10 +348,10 @@
                             <c:forEach var="token" items="${faceTokens}" varStatus="loop">
                                 <tr>
                                     <td>${loop.index + 1}</td>
-                                    <td>${token}</td>
+                                    <td>face${loop.index + 1}</td> <!-- Đổi chỗ này -->
                                     <td>
                                         <form action="deleteFaceId" method="post"
-                                              on-submit="return confirm('Bạn có chắc chắn muốn xóa Face ID này?');">
+                                              onsubmit="return confirm('Bạn có chắc chắn muốn xóa Face ID này?');">
                                             <input type="hidden" name="token" value="${token}">
                                             <button type="submit" class="btn btn-danger btn-sm">
                                                 <i class="fas fa-trash-alt"></i> Xóa
@@ -360,6 +360,7 @@
                                     </td>
                                 </tr>
                             </c:forEach>
+
                             </tbody>
                         </table>
                     </c:when>

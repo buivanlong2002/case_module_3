@@ -190,7 +190,7 @@
                 <div>
                   <i class="fas fa-laptop me-2"></i>
                   <strong>Trình duyệt:</strong> ${s.userAgent}<br />
-                  <small class="text-muted">IP: ${s.ipAddress} | Đăng nhập lúc: ${s.loginTime}</small>
+                  <small class="text-muted">Thiết bị: ${s.ipAddress} | Đăng nhập lúc: ${s.loginTime}</small>
                 </div>
                 <form action="remote-logout" method="post" style="margin:0;">
                   <input type="hidden" name="sessionId" value="${s.sessionId}" />
