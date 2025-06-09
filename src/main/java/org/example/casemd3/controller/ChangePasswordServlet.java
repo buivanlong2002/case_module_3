@@ -1,6 +1,5 @@
 package org.example.casemd3.controller;
 
-import org.example.casemd3.dao.UserDAO;
 import org.example.casemd3.model.User;
 import org.example.casemd3.service.UserService;
 
@@ -62,7 +61,7 @@ public class ChangePasswordServlet extends HttpServlet {
 
         try {
             boolean isCurrentPasswordCorrect = userService.checkPassword(user.getUser_id(), currentPassword);
-            if (isCurrentPasswordCorrect) {
+            if (!isCurrentPasswordCorrect) {
                 req.setAttribute("errorCurrentPassword", "Mật khẩu hiện tại không đúng.");
                 req.getRequestDispatcher("change-password.jsp").forward(req, resp);
                 return;

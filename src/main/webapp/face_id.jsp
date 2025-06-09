@@ -532,7 +532,7 @@
                 setTimeout(() => {
                     const modal = bootstrap.Modal.getInstance(document.getElementById('registerFaceModal'));
                     modal.hide();
-                }, 2000); // Tự động đóng modal sau 2 giây
+                }, 5);
             } else {
                 alert(result.message || 'Đăng ký thất bại. Vui lòng thử lại!');
             }

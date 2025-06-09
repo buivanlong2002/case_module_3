@@ -10,10 +10,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * DAO (Data Access Object) để thao tác với bảng faceId trong cơ sở dữ liệu.
- * Cung cấp các phương thức CRUD cho dữ liệu nhận diện khuôn mặt.
- */
+
 public class FaceIdDao {
 
     /**
