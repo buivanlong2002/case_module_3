@@ -13,7 +13,7 @@ public class UserDAO {
 
 
     public User findByEmail(String email) {
-        String sql = "SELECT * FROM users WHERE email = ?";
+        String sql = "SELECT * FROM users1 WHERE email = ?";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setString(1, email);
             ResultSet rs = ps.executeQuery();
@@ -36,7 +36,7 @@ public class UserDAO {
     }
 
     public String getEmailByUserId(int userId) throws SQLException {
-        String query = "SELECT email FROM users WHERE user_id = ?";
+        String query = "SELECT email FROM users1 WHERE user_id = ?";
         try (
                 Connection conn = DBConnection.getConnection();
                 PreparedStatement stmt = conn.prepareStatement(query)
@@ -54,7 +54,7 @@ public class UserDAO {
     }
 
     public boolean updatePasswordByUserId(int userId, String newPassword) throws SQLException {
-        String query = "UPDATE users SET password = ? WHERE user_id = ?";
+        String query = "UPDATE users1 SET password = ? WHERE user_id = ?";
         try (
                 Connection conn = DBConnection.getConnection();
                 PreparedStatement stmt = conn.prepareStatement(query)
@@ -70,7 +70,7 @@ public class UserDAO {
     }
 
     public boolean checkPassword(int userId, String password) throws SQLException {
-        String query = "SELECT password FROM users WHERE user_id = ?";
+        String query = "SELECT password FROM users1 WHERE user_id = ?";
         try (
                 Connection conn = DBConnection.getConnection();
                 PreparedStatement stmt = conn.prepareStatement(query)
@@ -85,7 +85,7 @@ public class UserDAO {
         return false;
     }
     public static void updateAvatar(int userId, String avatarUrl) {
-        String sql = "UPDATE users SET image = ? WHERE user_id = ?";
+        String sql = "UPDATE users1 SET image = ? WHERE user_id = ?";
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, avatarUrl);
