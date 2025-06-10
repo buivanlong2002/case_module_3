@@ -135,7 +135,8 @@ public class LoginServlet extends HttpServlet {
 
         if (!userSessionService.hasSessionWithUserAgent(userId, browserName)) {
             sessionId = UUID.randomUUID().toString();
-            userSessionService.createSession(sessionId, userId, deviceType, browserName);
+            // de ip hoac deviceType
+            userSessionService.createSession(sessionId, userId, ip, browserName);
         } else {
             sessionId = userSessionService.getSessionIdByUserAgent(userId, browserName);
             userSessionService.updateLoginTimestamp(sessionId);
