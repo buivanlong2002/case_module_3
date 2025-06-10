@@ -19,10 +19,7 @@ CREATE TABLE `users`
     PRIMARY KEY (`user_id`),
     UNIQUE KEY `username` (`username`),
     UNIQUE KEY `email` (`email`)
-) ENGINE=InnoDB
-  AUTO_INCREMENT=3
-  DEFAULT CHARSET=utf8mb4
-  COLLATE=utf8mb4_0900_ai_ci;
+)
 
 -- Tạo bảng user_sessions
 CREATE TABLE `user_sessions`
@@ -35,9 +32,7 @@ CREATE TABLE `user_sessions`
     PRIMARY KEY (`session_id`),
     KEY          `user_id` (`user_id`),
     CONSTRAINT `user_sessions_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`)
-) ENGINE=InnoDB
-  DEFAULT CHARSET=utf8mb4
-  COLLATE=utf8mb4_0900_ai_ci;
+)
 
 -- Tạo bảng faceid
 CREATE TABLE `faceid`
@@ -47,7 +42,4 @@ CREATE TABLE `faceid`
     `face_token` VARCHAR(255) NOT NULL,
     PRIMARY KEY (`id`),
     CONSTRAINT `faceid_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`)
-) ENGINE=InnoDB
-  AUTO_INCREMENT=16
-  DEFAULT CHARSET=utf8mb4
-  COLLATE=utf8mb4_0900_ai_ci;
+)

@@ -47,7 +47,7 @@ public class AuthDao {
 
     // Thêm user mới vào database
     public boolean insertUser(String username, String email, String password) throws SQLException {
-        String sql = "INSERT INTO users(username, email, password) VALUES (?, ?, ?)";
+        String sql = "INSERT INTO users1(username, email, password) VALUES (?, ?, ?)";
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, username);

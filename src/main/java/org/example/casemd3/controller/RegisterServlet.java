@@ -28,7 +28,7 @@ public class RegisterServlet extends HttpServlet {
         }
 
         String username = req.getParameter("username");
-        String email = req.getParameter("gmail"); // Đồng bộ với JSP
+        String email = req.getParameter("email");
         String password = req.getParameter("password");
         String confirmPassword = req.getParameter("confirmPassword");
 

@@ -122,7 +122,7 @@ public class LoginServlet extends HttpServlet {
         // Lấy IP từ header X-Forwarded-For nếu có
         String ip = req.getHeader("X-Forwarded-For");
         if (ip != null && !ip.isEmpty() && !"unknown".equalsIgnoreCase(ip)) {
-            ip = ip.split(",")[0].trim(); // lấy IP đầu tiên
+            ip = ip.split(",")[0].trim();
         } else {
             ip = req.getRemoteAddr();
         }

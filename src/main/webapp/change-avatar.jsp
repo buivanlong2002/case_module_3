@@ -55,7 +55,7 @@
 
     <form action="ChangeAvatarServlet" method="post" enctype="multipart/form-data">
         <div class="mb-3">
-            <label for="avatarFile" class="form-label">Chọn ảnh mới (jpg, png, ≤ 2MB):</label>
+            <label for="avatarFile" class="form-label">Chọn ảnh mới: </label>
             <input type="file" class="form-control" id="avatarFile" name="avatarFile"
                    accept="image/png, image/jpeg" required onchange="previewImage(event)">
         </div>

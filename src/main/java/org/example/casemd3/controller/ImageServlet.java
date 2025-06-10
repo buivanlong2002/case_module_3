@@ -13,7 +13,7 @@ public class ImageServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        String requestedImage = request.getPathInfo(); // ví dụ: /abc123.jpg
+        String requestedImage = request.getPathInfo();
 
         if (requestedImage == null) {
             response.sendError(HttpServletResponse.SC_NOT_FOUND);
