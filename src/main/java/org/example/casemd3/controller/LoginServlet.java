@@ -17,6 +17,8 @@ import javax.servlet.annotation.MultipartConfig;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.*;
 import java.io.IOException;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.UUID;
@@ -129,6 +131,13 @@ public class LoginServlet extends HttpServlet {
             ip = "127.0.0.1";
         }
 
+        String hostname = null ;
+        try {
+            InetAddress inetAddress = InetAddress.getByName(ip);
+             hostname = inetAddress.getHostName();
+        } catch (UnknownHostException e) {
+            e.printStackTrace();
+        }
 
         HttpSession session = req.getSession(true);
         String sessionId;
@@ -136,7 +145,7 @@ public class LoginServlet extends HttpServlet {
         if (!userSessionService.hasSessionWithUserAgent(userId, browserName)) {
             sessionId = UUID.randomUUID().toString();
             // de ip hoac deviceType
-            userSessionService.createSession(sessionId, userId, ip, browserName);
+            userSessionService.createSession(sessionId, userId, hostname, browserName);
         } else {
             sessionId = userSessionService.getSessionIdByUserAgent(userId, browserName);
             userSessionService.updateLoginTimestamp(sessionId);
