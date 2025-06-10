@@ -135,6 +135,7 @@ public class LoginServlet extends HttpServlet {
         try {
             InetAddress inetAddress = InetAddress.getByName(ip);
              hostname = inetAddress.getHostName();
+            System.out.println(hostname);
         } catch (UnknownHostException e) {
             e.printStackTrace();
         }

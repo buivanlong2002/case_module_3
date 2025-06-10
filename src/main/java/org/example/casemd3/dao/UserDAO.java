@@ -70,7 +70,7 @@ public class UserDAO {
     }
 
     public boolean checkPassword(int userId, String password) throws SQLException {
-        String query = "SELECT password FROM users WHERE username = ?";
+        String query = "SELECT password FROM users WHERE user_id = ?";
         try (
                 Connection conn = DBConnection.getConnection();
                 PreparedStatement stmt = conn.prepareStatement(query)
