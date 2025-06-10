@@ -16,7 +16,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 public class AuthDao {
     public int validateUser(String email, String password) throws SQLException {
-        String sql = "SELECT user_id FROM users WHERE email = ? AND password = ?";
+        String sql = "SELECT user_id FROM users1 WHERE email = ? AND password = ?";
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, email);
@@ -31,7 +31,7 @@ public class AuthDao {
     }
     // Kiểm tra username hoặc email đã tồn tại chưa
     public boolean isUserOrEmailExist(String username, String email) throws SQLException {
-        String sql = "SELECT COUNT(*) FROM users WHERE username = ? OR email = ?";
+        String sql = "SELECT COUNT(*) FROM users1 WHERE username = ? OR email = ?";
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, username);
