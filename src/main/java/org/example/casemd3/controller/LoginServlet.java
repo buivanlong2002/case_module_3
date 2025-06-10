@@ -126,27 +126,15 @@ public class LoginServlet extends HttpServlet {
         } else {
             ip = req.getRemoteAddr();
         }
-
         if ("0:0:0:0:0:0:0:1".equals(ip) || "::1".equals(ip)) {
             ip = "127.0.0.1";
         }
-
-        String hostname = null ;
-        try {
-            InetAddress inetAddress = InetAddress.getByName(ip);
-             hostname = inetAddress.getHostName();
-            System.out.println(hostname);
-        } catch (UnknownHostException e) {
-            e.printStackTrace();
-        }
-
         HttpSession session = req.getSession(true);
         String sessionId;
-
         if (!userSessionService.hasSessionWithUserAgent(userId, browserName)) {
             sessionId = UUID.randomUUID().toString();
             // de ip hoac deviceType
-            userSessionService.createSession(sessionId, userId, hostname, browserName);
+            userSessionService.createSession(sessionId, userId, deviceType, browserName);
         } else {
             sessionId = userSessionService.getSessionIdByUserAgent(userId, browserName);
             userSessionService.updateLoginTimestamp(sessionId);
